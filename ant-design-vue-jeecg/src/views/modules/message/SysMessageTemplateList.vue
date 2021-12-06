@@ -3,7 +3,7 @@
 
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
-      <a-form layout="inline">
+      <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
 
           <a-col :md="6" :sm="8">
@@ -179,6 +179,9 @@
               if(text=='3') {
                 return "微信";
               }
+              if(text=='4') {
+                return "系统";
+              }
             }
           },
           {
@@ -189,11 +192,11 @@
           }
         ],
         url: {
-          list: "/message/sysMessageTemplate/list",
-          delete: "/message/sysMessageTemplate/delete",
-          deleteBatch: "/message/sysMessageTemplate/deleteBatch",
-          exportXlsUrl: "message/sysMessageTemplate/exportXls",
-          importExcelUrl: "message/sysMessageTemplate/importExcel",
+          list: "/sys/message/sysMessageTemplate/list",
+          delete: "/sys/message/sysMessageTemplate/delete",
+          deleteBatch: "/sys/message/sysMessageTemplate/deleteBatch",
+          exportXlsUrl: "sys/message/sysMessageTemplate/exportXls",
+          importExcelUrl: "sys/message/sysMessageTemplate/importExcel",
         },
       }
     },

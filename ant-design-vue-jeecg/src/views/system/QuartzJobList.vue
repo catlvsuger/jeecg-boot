@@ -3,22 +3,22 @@
 
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
-      <a-form layout="inline">
+      <a-form-model layout="inline" :model="queryParam" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
 
           <a-col :md="6" :sm="10">
-            <a-form-item label="任务类名">
+            <a-form-model-item label="任务类名" prop="jobClassName">
               <a-input placeholder="请输入任务类名" v-model="queryParam.jobClassName"></a-input>
-            </a-form-item>
+            </a-form-model-item>
           </a-col>
           <a-col :md="6" :sm="10">
-            <a-form-item label="任务状态">
+            <a-form-model-item label="任务状态" prop="status">
               <a-select style="width: 220px" v-model="queryParam.status" placeholder="请选择状态">
                 <a-select-option value="">全部</a-select-option>
                 <a-select-option value="0">正常</a-select-option>
                 <a-select-option value="-1">停止</a-select-option>
               </a-select>
-            </a-form-item>
+            </a-form-model-item>
           </a-col>
 
           <a-col :md="6" :sm="10" >
@@ -29,7 +29,7 @@
           </a-col>
 
         </a-row>
-      </a-form>
+      </a-form-model>
     </div>
 
     <!-- 操作按钮区域 -->
@@ -68,7 +68,10 @@
 
         <!-- 字符串超长截取省略号显示-->
         <span slot="description" slot-scope="text">
-          <j-ellipsis :value="text" :length="25" />
+          <j-ellipsis :value="text" :length="20" />
+        </span>
+        <span slot="parameterRender" slot-scope="text">
+          <j-ellipsis :value="text" :length="20" />
         </span>
 
 
@@ -80,6 +83,7 @@
           <a-dropdown>
             <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
             <a-menu slot="overlay">
+              <a-menu-item><a @click="executeImmediately(record)">立即执行</a></a-menu-item>
               <a-menu-item><a @click="handleEdit(record)">编辑</a></a-menu-item>
               <a-menu-item>
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
@@ -151,12 +155,14 @@
           {
             title: '参数',
             align:"center",
-            dataIndex: 'parameter'
+            width: 150,
+            dataIndex: 'parameter',
+            scopedSlots: {customRender: 'parameterRender'},
           },
           {
             title: '描述',
             align:"center",
-            width: 300,
+            width: 250,
             dataIndex: 'description',
             scopedSlots: {customRender: 'description'},
           },
@@ -187,6 +193,7 @@
           resume: "/sys/quartzJob/resume",
           exportXlsUrl: "sys/quartzJob/exportXls",
           importExcelUrl: "sys/quartzJob/importExcel",
+          execute: "sys/quartzJob/execute"
         },
       }
     },
@@ -207,7 +214,12 @@
           this.isorter.order = "ascend" == sorter.order ? "asc" : "desc"
         }
         //这种筛选方式只支持单选
-        this.filters.status = filters.status[0];
+        
+        // update-begin-author:liusq date:20210624 for:前台定时任务无法翻页  #2666
+        if(filters && Object.keys(filters).length>0 && filters.status){
+          this.filters.status = filters.status[0];
+        }
+        // update-end-author:liusq date:20210624 for:前台定时任务无法翻页  #2666
         this.ipagination = pagination;
         this.loadData();
       },
@@ -218,7 +230,7 @@
           title:"确认暂停",
           content:"是否暂停选中任务?",
           onOk: function(){
-            getAction(that.url.pause,{jobClassName:record.jobClassName}).then((res)=>{
+            getAction(that.url.pause,{id:record.id}).then((res)=>{
               if(res.success){
                 that.$message.success(res.message);
                 that.loadData();
@@ -238,7 +250,7 @@
           title:"确认启动",
           content:"是否启动选中任务?",
           onOk: function(){
-            getAction(that.url.resume,{jobClassName:record.jobClassName}).then((res)=>{
+            getAction(that.url.resume,{id:record.id}).then((res)=>{
               if(res.success){
                 that.$message.success(res.message);
                 that.loadData();
@@ -250,6 +262,25 @@
           }
         });
       },
+      executeImmediately(record){
+        var that = this;
+        //立即执行定时任务
+        this.$confirm({
+          title:"确认提示",
+          content:"是否立即执行任务?",
+          onOk: function(){
+            getAction(that.url.execute,{id:record.id}).then((res)=>{
+              if(res.success){
+                that.$message.success(res.message);
+                that.loadData();
+                that.onClearSelected();
+              }else{
+                that.$message.warning(res.message);
+              }
+            });
+          }
+        });
+      }
     }
   }
 </script>

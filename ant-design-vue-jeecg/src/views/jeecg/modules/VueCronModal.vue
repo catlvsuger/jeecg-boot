@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="corn表达式"
+    title="cron表达式"
     :width="modalWidth"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -486,7 +486,7 @@
                         days = this.result.day.cronLastSpecificDomDay + 'L';
                         break;
                     case '9':
-                        days = 'L-' + this.day.cronDaysBeforeEomMinus;
+                        days = 'L-' + this.result.day.cronDaysBeforeEomMinus;
                         break;
                     case '10':
                         days = this.result.day.cronDaysNearestWeekday+"W";
@@ -624,13 +624,13 @@
                 }
             },
             callback (key) {
-                console.log(key)
+                //console.log(key)
             }
         }
     }
 </script>
 
-<style lang="scss">
+<style lang="less">
     .card-container {
         background: #fff;
         overflow: hidden;
@@ -678,7 +678,7 @@
         }
     }
 </style>
-<style lang="scss" scoped>
+<style lang="less" scoped>
     .container-widthEn{
         width: 755px;
     }

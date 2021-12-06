@@ -10,14 +10,14 @@
         v-if="device==='mobile'"
         class="trigger"
         :type="collapsed ? 'menu-fold' : 'menu-unfold'"
-        @click.native="toggle"></a-icon>
+        @click="toggle"></a-icon>
       <a-icon
         v-else
         class="trigger"
         :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-        @click.native="toggle"/>
+        @click="toggle"/>
 
-      <span v-if="device === 'desktop'">欢迎进入 Jeecg-Boot 企业级快速开发平台</span>
+      <span v-if="device === 'desktop'">欢迎进入 Jeecg-Boot 企业级低代码平台</span>
       <span v-else>Jeecg-Boot</span>
 
       <user-menu :theme="theme"/>
@@ -31,13 +31,15 @@
             <s-menu
               mode="horizontal"
               :menu="menus"
-              :theme="theme"></s-menu>
+              :theme="theme"
+              @updateMenuTitle="handleUpdateMenuTitle"
+            ></s-menu>
           </div>
           <a-icon
             v-else
             class="trigger"
             :type="collapsed ? 'menu-fold' : 'menu-unfold'"
-            @click.native="toggle"></a-icon>
+            @click="toggle"></a-icon>
         </div>
         <user-menu class="header-index-right" :theme="theme" :style="topMenuStyle.headerIndexRight"/>
       </div>
@@ -50,7 +52,6 @@
   import UserMenu from '../tools/UserMenu'
   import SMenu from '../menu/'
   import Logo from '../tools/Logo'
-
   import { mixin } from '@/utils/mixin.js'
 
   export default {
@@ -58,7 +59,7 @@
     components: {
       UserMenu,
       SMenu,
-      Logo
+      Logo,
     },
     mixins: [mixin],
     props: {
@@ -96,7 +97,8 @@
           topNavHeader: {},
           headerIndexRight: {},
           topSmenuStyle: {}
-        }
+        },
+        chatStatus: '',
       }
     },
     watch: {
@@ -155,16 +157,23 @@
             this.topMenuStyle.headerIndexLeft = { 'width': `calc(100% - ${rightWidth})` }
           }
         }
-      }
+      },
       //update-begin--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
+
+      // update-begin-author:sunjianlei date:20210508 for: 修复动态功能测试菜单、带参数菜单标题错误、展开错误的问题
+      handleUpdateMenuTitle(value) {
+        this.$emit('updateMenuTitle', value)
+      },
+      // update-end-author:sunjianlei date:20210508 for: 修复动态功能测试菜单、带参数菜单标题错误、展开错误的问题
+
     }
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
   /* update_begin author:scott date:20190220 for: 缩小首页布局顶部的高度*/
 
-  $height: 59px;
+  @height: 59px;
 
   .layout {
 
@@ -174,8 +183,8 @@
         margin-left: 10px;
 
         .ant-menu.ant-menu-horizontal {
-          height: $height;
-          line-height: $height;
+          height: @height;
+          line-height: @height;
         }
       }
       .trigger {
@@ -189,8 +198,8 @@
     .header {
       z-index: 2;
       color: white;
-      height: $height;
-      background-color: #1890ff;
+      height: @height;
+      background-color: @primary-color;
       transition: background 300ms;
 
       /* dark 样式 */
@@ -209,8 +218,8 @@
   }
 
   .ant-layout-header {
-    height: $height;
-    line-height: $height;
+    height: @height;
+    line-height: @height;
   }
 
   /* update_end author:scott date:20190220 for: 缩小首页布局顶部的高度*/

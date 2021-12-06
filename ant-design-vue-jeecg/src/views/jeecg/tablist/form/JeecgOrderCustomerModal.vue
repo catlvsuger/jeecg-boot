@@ -11,88 +11,71 @@
 
     <!-- 编辑 -->
     <a-spin :spinning="confirmLoading" v-if="editStatus">
-      <a-form :form="form">
-
-        <a-form-item
+      <a-form-model ref="form" :model="model" :rules="validatorRules">
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="客户姓名"
+          prop="name"
+          required
           hasFeedback>
-          <a-input placeholder="请输入客户姓名" v-decorator="['name', {rules: [{ required: true, message: '请输入客户姓名!' }]}]"
-                   :readOnly="disableSubmit"/>
-        </a-form-item>
-        <a-form-item
+          <a-input placeholder="请输入客户姓名" v-model="model.name" :readOnly="disableSubmit"/>
+        </a-form-model-item>
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="性别"
           hasFeedback>
-          <a-select v-decorator="['sex', {}]" placeholder="请选择性别">
+          <a-select v-model="model.sex" placeholder="请选择性别">
             <a-select-option value="1">男性</a-select-option>
             <a-select-option value="2">女性</a-select-option>
           </a-select>
-        </a-form-item>
-        <a-form-item
+        </a-form-model-item>
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="身份证号码"
+          prop="idcard"
           hasFeedback>
-          <a-input placeholder="请输入身份证号码" v-decorator="['idcard', validatorRules.idcard]" :readOnly="disableSubmit"/>
-        </a-form-item>
-        <a-form-item
+          <a-input placeholder="请输入身份证号码" v-model="model.idcard" :readOnly="disableSubmit"/>
+        </a-form-model-item>
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="身份证扫描件"
           hasFeedback>
-          <a-upload
-            :action="uploadAction"
-            listType="picture-card"
-            :headers="headers"
-            :fileList="fileList"
-            @change="handleChange"
-            @preview="handlePreview"
-          >
-            <a-button>
-              <a-icon type="upload"/>
-              upload
-            </a-button>
-          </a-upload>
-          <a-modal :visible="previewVisible" :footer="null" @cancel="handlePicCancel">
-            <img alt="example" style="width: 100%" :src="previewImage"/>
-          </a-modal>
-
-          <br/>
-        </a-form-item>
-        <a-form-item
+          <j-image-upload text="上传" v-model="fileList" :isMultiple="true"></j-image-upload>
+        </a-form-model-item>
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="联系方式"
+          prop="telphone"
           hasFeedback>
-          <a-input v-decorator="[ 'telphone', validatorRules.telphone]" :readOnly="disableSubmit"/>
-        </a-form-item>
-        <a-form-item
+          <a-input v-model="model.telphone" :readOnly="disableSubmit"/>
+        </a-form-model-item>
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="订单号码"
-          v-model="this.orderId"
           :hidden="hiding"
           hasFeedback>
-          <a-input v-decorator="[ 'orderId', {}]" disabled="disabled"/>
-        </a-form-item>
-      </a-form>
+          <a-input v-model="model.orderId" disabled="disabled"/>
+        </a-form-model-item>
+      </a-form-model>
     </a-spin>
   </a-modal>
 </template>
 
 <script>
   import {httpAction} from '@/api/manage'
-  import pick from 'lodash.pick'
   import Vue from 'vue'
   import {ACCESS_TOKEN} from "@/store/mutation-types"
-
-  import { getUploadFileList,getFilePaths } from '@/utils/commonUploadFile.js'
+  import JImageUpload from '../../../../components/jeecg/JImageUpload'
 
   export default {
     name: "JeecgOrderCustomerModal",
+    components: { JImageUpload },
     data() {
       return {
         title: "操作",
@@ -106,59 +89,6 @@
           xs: {span: 24},
           sm: {span: 16},
         },
-        // 表头
-        columns: [
-          {
-            title: '客户名',
-            align: "center",
-            dataIndex: 'name',
-          },
-          {
-            title: '性别',
-            align: "center",
-            dataIndex: 'sex',
-          },
-          {
-            title: '身份证号码',
-            align: "center",
-            dataIndex: 'idcard',
-          },
-          {
-            title: '身份证扫描件',
-            align: "center",
-            dataIndex: 'idcardPic',
-          },
-          {
-            title: '电话',
-            dataIndex: 'telphone',
-            align: "center",
-          },
-          {
-            title: '订单号码',
-            dataIndex: 'orderId',
-            align: "center",
-          },
-          {
-            title: '创建人',
-            dataIndex: 'createBy',
-            align: "center",
-          },
-          {
-            title: '创建时间',
-            dataIndex: 'createTime',
-            align: "center",
-          },
-          {
-            title: '更新时间',
-            dataIndex: 'updateBy',
-            align: "center",
-          },
-          {
-            title: '更新人',
-            dataIndex: 'updateTime',
-            align: "center",
-          },
-        ],
         fileList: [],
         disableSubmit: false,
         selectedRowKeys: [],
@@ -172,17 +102,16 @@
         addStatus: false,
         editStatus: false,
         confirmLoading: false,
-        form: this.$form.createForm(this),
         url: {
           add: "/test/order/addCustomer",
           edit: "/test/order/editCustomer",
           fileUpload: window._CONFIG['domianURL'] + "/sys/common/upload",
-          imgerver: window._CONFIG['domianURL'] + "/sys/common/view",
           getOrderCustomerList: "/test/order/listOrderCustomerByMainId",
         },
         validatorRules: {
-          telphone: {rules: [{validator: this.validateMobile}]},
-          idcard: {rules: [{validator: this.validateIdCard}]}
+          name :[{required: true, message: '请输入客户姓名!'}],
+          telphone: [{validator: this.validateMobile}],
+          idcard: [{validator: this.validateIdCard}]
         },
       }
     },
@@ -199,7 +128,6 @@
       add(orderId) {
         this.hiding = true;
         if (orderId) {
-          this.orderId = orderId;
           this.edit({orderId}, '');
         } else {
           this.$message.warning("请选择一个客户信息");
@@ -219,19 +147,15 @@
           this.hiding = true;
           this.disableSubmit = false;
         }
-
-        this.form.resetFields();
-        this.orderId = record.orderId;
-        let currFileList = getUploadFileList(record.idcardPic)
-        this.fileList = [...currFileList]
+        
         this.model = Object.assign({}, record);
         if (record.id) {
           this.hiding = false;
           this.addStatus = false;
           this.editStatus = true;
-          this.$nextTick(() => {
-            this.form.setFieldsValue(pick(this.model, 'id', 'name', 'sex', 'idcard','telphone', 'orderId', 'createBy', 'createTime', 'updateBy', 'updateTime'))
-          });
+          setTimeout(() => {
+            this.fileList = record.idcardPic
+          }, 5)
         } else {
           this.addStatus = false;
           this.editStatus = true;
@@ -243,12 +167,13 @@
         this.visible = false;
         this.picUrl = "";
         this.fileList=[];
+        this.$refs.form.resetFields();
       },
       handleOk() {
         const that = this;
         // 触发表单验证
-        this.form.validateFields((err, values) => {
-          if (!err) {
+        this.$refs.form.validate(valid => {
+          if (valid) {
             that.confirmLoading = true;
             let httpurl = '';
             let method = '';
@@ -259,10 +184,12 @@
               httpurl += this.url.edit;
               method = 'put';
             }
-            let formData = Object.assign(this.model, values);
-            console.log(formData);
-            formData.orderId = this.orderId;
-            formData.idcardPic = getFilePaths(this.fileList)
+            let formData = Object.assign({}, this.model);
+            if(this.fileList != '') {
+              formData.idcardPic = this.fileList;
+            }else{
+              formData.idcardPic = '';
+            }
             httpAction(httpurl, formData, method).then((res) => {
               if (res.success) {
                 that.$message.success(res.message);
@@ -274,6 +201,8 @@
               that.confirmLoading = false;
               that.close();
             })
+          }else{
+            return false;
           }
         })
       },
@@ -294,36 +223,6 @@
           callback("您的身份证号码格式不正确!");
         }
       },
-      handleChange(info) {
-        this.fileList = info.fileList;
-        if (info.file.status === 'uploading') {
-          return
-        }
-        if (info.file.status === 'done') {
-          var response = info.file.response;
-          if (!response.success) {
-            this.$message.warning(response.message);
-          }
-        }
-      },
-      handlePicCancel() {
-        this.previewVisible = false
-        this.previewImage=''
-      },
-      handlePicView(url){
-        this.previewImage = this.url.imgerver + "/" + url
-        this.previewVisible = true
-      },
-      handlePreview(file) {
-        this.previewImage = file.url || file.thumbUrl
-        this.previewVisible = true
-      },
-      getIdCardView(url) {
-       // let pics = this.model.idcardPic.split(",");
-        //let pics_len = pics.length;
-        // 显示上传的最后一个图片
-        return this.url.imgerver + "/" + url
-      }
     }
   }
 </script>

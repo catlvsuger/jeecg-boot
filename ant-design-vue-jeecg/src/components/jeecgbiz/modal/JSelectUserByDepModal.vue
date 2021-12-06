@@ -1,13 +1,14 @@
 <template>
-  <a-modal
+  <j-modal
     :width="modalWidth"
     :visible="visible"
     :title="title"
+    switchFullscreen
+    wrapClassName="j-user-select-modal"
     @ok="handleSubmit"
     @cancel="close"
+    style="top:50px"
     cancelText="关闭"
-    style="margin-top: -70px"
-    wrapClassName="ant-modal-cust-warp"
   >
     <a-row :gutter="10" style="background-color: #ececec; padding: 10px; margin: -10px">
       <a-col :md="6" :sm="24">
@@ -15,11 +16,13 @@
           <!--组织机构-->
           <a-directory-tree
             selectable
-            :selectedKeys="selectedKeys"
+            :selectedKeys="selectedDepIds"
             :checkStrictly="true"
-            @select="this.onSelect"
             :dropdownStyle="{maxHeight:'200px',overflow:'auto'}"
             :treeData="departTree"
+            :expandAction="false"
+            @select="onDepSelect"
+            :load-data="onLoadDepartment"
           />
         </a-card>
       </a-col>
@@ -28,7 +31,7 @@
           用户账号:
           <a-input-search
             :style="{width:'150px',marginBottom:'15px'}"
-            placeholder="请输入用户账号"
+            placeholder="请输入账号"
             v-model="queryParam.username"
             @search="onSearch"
           ></a-input-search>
@@ -42,26 +45,29 @@
             :columns="columns"
             :dataSource="dataSource"
             :pagination="ipagination"
-            :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+            :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange,type: getType}"
+            :loading="loading"
             @change="handleTableChange">
           </a-table>
         </a-card>
       </a-col>
     </a-row>
-  </a-modal>
+  </j-modal>
 </template>
 
 <script>
-  import { filterObj } from '@/utils/util'
-  import { queryDepartTreeList, getUserList, queryUserByDepId, queryUserRoleMap } from '@/api/api'
+  import { pushIfNotExist, filterObj } from '@/utils/util'
+  import {queryDepartTreeList, getUserList, queryUserByDepId, queryDepartTreeSync} from '@/api/api'
+  import { getAction } from '@/api/manage'
+
   export default {
     name: 'JSelectUserByDepModal',
     components: {},
-    props:['modalWidth'],
+    props: ['modalWidth', 'multi', 'userIds', 'store', 'text'],
     data() {
       return {
         queryParam: {
-          username:"",
+          username: "",
         },
         columns: [
           {
@@ -70,20 +76,15 @@
             dataIndex: 'username'
           },
           {
-            title: '真实姓名',
+            title: '用户姓名',
             align: 'center',
             dataIndex: 'realname'
-          },
-          {
-            title: '角色名称',
-            align: 'center',
-            dataIndex: 'roleName'
           },
           {
             title: '性别',
             align: 'center',
             dataIndex: 'sex',
-            customRender: function(text) {
+            customRender: function (text) {
               if (text === 1) {
                 return '男'
               } else if (text === 2) {
@@ -94,22 +95,22 @@
             }
           },
           {
-            title: '手机号码',
+            title: '手机',
             align: 'center',
             dataIndex: 'phone'
           },
           {
-            title: '邮箱',
+            title: '部门',
             align: 'center',
-            dataIndex: 'email'
+            dataIndex: 'orgCodeTxt'
           }
         ],
         scrollTrigger: {},
         dataSource: [],
-        selectedKeys: [],
-        userNameArr: [],
-        departName: '',
-        userRolesMap: {},
+        selectionRows: [],
+        selectedRowKeys: [],
+        selectUserRows: [],
+        selectUserIds: [],
         title: '根据部门选择用户',
         ipagination: {
           current: 1,
@@ -126,53 +127,90 @@
           column: 'createTime',
           order: 'desc'
         },
-        selectedRowKeys: [],
-        selectedRows: [],
+        selectedDepIds: [],
         departTree: [],
         visible: false,
-        form: this.$form.createForm(this)
+        form: this.$form.createForm(this),
+        loading: false,
+        expandedKeys: [],
       }
+    },
+    computed: {
+      // 计算属性的 getter
+      getType: function () {
+        return this.multi == true ? 'checkbox' : 'radio';
+      }
+    },
+    watch: {
+      userIds: {
+        immediate: true,
+        handler() {
+          this.initUserNames()
+        }
+      },
     },
     created() {
       // 该方法触发屏幕自适应
       this.resetScreenSize();
-      this.queryUserRoleMap();
+      this.loadData()
     },
     methods: {
-      loadData(arg) {
+      initUserNames() {
+        if (this.userIds) {
+          // 这里最后加一个 , 的原因是因为无论如何都要使用 in 查询，防止后台进行了模糊匹配，导致查询结果不准确
+          let values = this.userIds.split(',') + ','
+          let param = {[this.store]: values}
+          getAction('/sys/user/getMultiUser', param).then((list)=>{
+            this.selectionRows = []
+            let selectedRowKeys = []
+            let textArray = []
+            if(list && list.length>0){
+              for(let user of list){
+                textArray.push(user[this.text])
+                selectedRowKeys.push(user['id'])
+                this.selectionRows.push(user)
+              }
+            }
+            this.selectedRowKeys = selectedRowKeys
+            this.$emit('initComp', textArray.join(','))
+          })
+
+        } else {
+          // JSelectUserByDep组件bug issues/I16634
+          this.$emit('initComp', '')
+          // 前端用户选择单选无法置空的问题 #2610
+          this.selectedRowKeys = []
+        }
+      },
+      async loadData(arg) {
         if (arg === 1) {
           this.ipagination.current = 1;
         }
-        let params = this.getQueryParams();//查询条件
-        getUserList(params).then((res) => {
+        let params = this.getQueryParams()//查询条件
+        this.loading = true
+        getAction('/sys/user/queryUserComponentData', params).then(res=>{
           if (res.success) {
-            this.dataSource = res.result.records;
-            this.assignRoleName(this.dataSource);
-            this.ipagination.total = res.result.total;
+            this.dataSource = res.result.records
+            this.ipagination.total = res.result.total
           }
-        })
-      },
-      queryUserRoleMap(){
-        queryUserRoleMap().then((res) => {
-          if (res.success) {
-            this.userRolesMap = res.result;
-            this.loadData();
-          }
+        }).finally(() => {
+          this.loading = false
         })
       },
       // 触发屏幕自适应
       resetScreenSize() {
         let screenWidth = document.body.clientWidth;
         if (screenWidth < 500) {
-          this.scrollTrigger = { x: 800 };
+          this.scrollTrigger = {x: 800};
         } else {
           this.scrollTrigger = {};
         }
       },
       showModal() {
         this.visible = true;
-        this.assignRoleName(this.dataSource);
         this.queryDepartTree();
+        this.initUserNames()
+        this.loadData();
         this.form.resetFields();
       },
       getQueryParams() {
@@ -180,6 +218,7 @@
         param.field = this.getQueryField();
         param.pageNo = this.ipagination.current;
         param.pageSize = this.ipagination.pageSize;
+        param.departId = this.selectedDepIds.join(',')
         return filterObj(param);
       },
       getQueryField() {
@@ -191,13 +230,13 @@
       },
       searchReset(num) {
         let that = this;
-        if(num !== 0){
+        that.selectedRowKeys = [];
+        that.selectUserIds = [];
+        that.selectedDepIds = [];
+        if (num !== 0) {
           that.queryParam = {};
           that.loadData(1);
         }
-        that.selectedRowKeys = [];
-        that.userNameArr = [];
-        that.selectedKeys = [];
       },
       close() {
         this.searchReset(0);
@@ -214,75 +253,79 @@
       },
       handleSubmit() {
         let that = this;
-        for (let i = 0, len = this.selectedRowKeys.length; i < len; i++) {
-          this.getUserNames(this.selectedRowKeys[i]);
-        }
-        that.$emit('ok', that.userNameArr.join(','));
+        this.getSelectUserRows();
+        that.$emit('ok', that.selectUserRows);
+        that.searchReset(0)
         that.close();
       },
-      // 遍历匹配,获取用户真实姓名
-      getUserNames(rowId) {
-        let dataSource = this.dataSource;
-        for (let i = 0, len = dataSource.length; i < len; i++) {
-          if (rowId === dataSource[i].id) {
-            this.userNameArr.push(dataSource[i].realname);
+      //获取选择用户信息
+      getSelectUserRows() {
+        this.selectUserRows = []
+        for (let row of this.selectionRows) {
+          if (this.selectedRowKeys.includes(row.id)) {
+            this.selectUserRows.push(row)
           }
         }
+        this.selectUserIds = this.selectUserRows.map(row => row.username).join(',')
       },
       // 点击树节点,筛选出对应的用户
-      onSelect(selectedKeys) {
-        if (selectedKeys[0] != null) {
-          this.queryUserByDepId(selectedKeys); // 调用方法根据选选择的id查询用户信息
-          if (this.selectedKeys[0] !== selectedKeys[0]) {
-            this.selectedKeys = [selectedKeys[0]];
+      onDepSelect(selectedDepIds) {
+        if (selectedDepIds[0] != null) {
+          if (this.selectedDepIds[0] !== selectedDepIds[0]) {
+            this.selectedDepIds = [selectedDepIds[0]];
           }
+          this.loadData(1);
         }
       },
       onSelectChange(selectedRowKeys, selectionRows) {
         this.selectedRowKeys = selectedRowKeys;
-        this.selectionRows = selectionRows;
+        selectionRows.forEach(row => pushIfNotExist(this.selectionRows, row, 'id'))
       },
       onSearch() {
         this.loadData(1);
       },
       // 根据选择的id来查询用户信息
-      queryUserByDepId(selectedKeys) {
-        queryUserByDepId({ id: selectedKeys.toString() }).then((res) => {
+      initQueryUserByDepId(selectedDepIds) {
+        this.loading = true
+        return queryUserByDepId({id: selectedDepIds.toString()}).then((res) => {
           if (res.success) {
             this.dataSource = res.result;
             this.ipagination.total = res.result.length;
-            this.assignRoleName(this.dataSource);
           }
+        }).finally(() => {
+          this.loading = false
         })
-      },
-      // 传入用户id,找到匹配的角色名称
-      queryUserRole(userId) {
-        let map = this.userRolesMap;
-        let roleName = [];
-        for (var key in map) {
-          if (userId === key) {
-            roleName.push(map[key]);
-          }
-        }
-        return roleName.join(',');
       },
       queryDepartTree() {
-        queryDepartTreeList().then((res) => {
+        //update-begin-author:taoyan date:20211202 for: 异步加载部门树 https://github.com/jeecgboot/jeecg-boot/issues/3196
+        this.expandedKeys = []
+        this.departTree = []
+        queryDepartTreeSync().then((res) => {
           if (res.success) {
-            this.departTree = res.result;
+            for (let i = 0; i < res.result.length; i++) {
+              let temp = res.result[i]
+              this.departTree.push(temp)
+            }
           }
         })
       },
-      // 为角色名称赋值
-      assignRoleName(data) {
-        let userId = '';
-        let role = '';
-        for (let i = 0, length = data.length; i < length; i++) {
-          userId = this.dataSource[i].id;
-          role = this.queryUserRole(userId);
-          this.dataSource[i].roleName = role;
-        }
+      onLoadDepartment(treeNode){
+        return new Promise(resolve => {
+          queryDepartTreeSync({pid:treeNode.dataRef.id}).then((res) =>  {
+            if (res.success) {
+              //判断chidlren是否为空，并修改isLeaf属性值
+              if(res.result.length == 0){
+                treeNode.dataRef['isLeaf']=true
+                return;
+              }else{
+                treeNode.dataRef['children']= res.result;
+              }
+            }
+          })
+          resolve();
+        });
       },
+      //update-end-author:taoyan date:20211202 for: 异步加载部门树 https://github.com/jeecgboot/jeecg-boot/issues/3196
       modalFormOk() {
         this.loadData();
       }

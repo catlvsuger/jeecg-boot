@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.util.SqlInjectionUtil;
 import org.jeecg.modules.system.mapper.SysDictMapper;
 import org.jeecg.modules.system.model.DuplicateCheckVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,10 @@ public class DuplicateCheckController {
 		Long num = null;
 
 		log.info("----duplicate check------："+ duplicateCheckVo.toString());
+		//关联表字典（举例：sys_user,realname,id）
+		//SQL注入校验（只限制非法串改数据库）
+		final String[] sqlInjCheck = {duplicateCheckVo.getTableName(),duplicateCheckVo.getFieldName()};
+		SqlInjectionUtil.filterContent(sqlInjCheck);
 		if (StringUtils.isNotBlank(duplicateCheckVo.getDataId())) {
 			// [2].编辑页面校验
 			num = sysDictMapper.duplicateCheckCountSql(duplicateCheckVo);

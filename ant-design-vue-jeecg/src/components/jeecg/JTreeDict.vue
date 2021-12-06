@@ -22,7 +22,7 @@
     data(){
       return {
         treeData:[],
-        treeValue:"",
+        treeValue: null,
         url_root:"/sys/category/loadTreeRoot",
         url_children:"/sys/category/loadTreeChildren",
         url_view:'/sys/category/loadOne',
@@ -97,7 +97,7 @@
     methods:{
       loadViewInfo(){
         if(!this.value || this.value=="0"){
-          this.treeValue = ""
+          this.treeValue = null
         }else{
           let param = {
             field:this.field,
@@ -121,7 +121,6 @@
         getAction(this.url_root,param).then(res=>{
           if(res.success){
             this.handleTreeNodeValue(res.result)
-            console.log("aaaa",res.result)
             this.treeData = [...res.result]
           }else{
             this.$message.error(res.message)
@@ -180,7 +179,11 @@
       },
       onChange(value){
         console.log(value)
-        this.$emit('change', value.value);
+        if(!value){
+          this.$emit('change', '');
+        }else{
+          this.$emit('change', value.value);
+        }
         this.treeValue = value
       },
       onSearch(value){

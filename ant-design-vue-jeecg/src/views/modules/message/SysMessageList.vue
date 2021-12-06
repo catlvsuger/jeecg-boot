@@ -3,7 +3,7 @@
 
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
-      <a-form layout="inline">
+      <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
           <a-col :md="6" :sm="8">
             <a-form-item label="消息标题">
@@ -183,11 +183,11 @@
           }
         ],
         url: {
-          list: "/message/sysMessage/list",
-          delete: "/message/sysMessage/delete",
-          deleteBatch: "/message/sysMessage/deleteBatch",
-          exportXlsUrl: "message/sysMessage/exportXls",
-          importExcelUrl: "message/sysMessage/importExcel",
+          list: "/sys/message/sysMessage/list",
+          delete: "/sys/message/sysMessage/delete",
+          deleteBatch: "/sys/message/sysMessage/deleteBatch",
+          exportXlsUrl: "sys/message/sysMessage/exportXls",
+          importExcelUrl: "sys/message/sysMessage/importExcel",
         },
       }
     },

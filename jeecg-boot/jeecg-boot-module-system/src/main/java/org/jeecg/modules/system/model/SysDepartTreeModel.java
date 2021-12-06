@@ -45,7 +45,9 @@ public class SysDepartTreeModel implements Serializable{
 
     private Integer departOrder;
 
-    private Object description;
+    private String description;
+    
+    private String orgCategory;
 
     private String orgType;
 
@@ -62,6 +64,8 @@ public class SysDepartTreeModel implements Serializable{
     private String status;
 
     private String delFlag;
+
+    private String qywxIdentifier;
 
     private String createBy;
 
@@ -89,6 +93,7 @@ public class SysDepartTreeModel implements Serializable{
         this.departNameAbbr = sysDepart.getDepartNameAbbr();
         this.departOrder = sysDepart.getDepartOrder();
         this.description = sysDepart.getDescription();
+        this.orgCategory = sysDepart.getOrgCategory();
         this.orgType = sysDepart.getOrgType();
         this.orgCode = sysDepart.getOrgCode();
         this.mobile = sysDepart.getMobile();
@@ -97,6 +102,7 @@ public class SysDepartTreeModel implements Serializable{
         this.memo = sysDepart.getMemo();
         this.status = sysDepart.getStatus();
         this.delFlag = sysDepart.getDelFlag();
+        this.qywxIdentifier = sysDepart.getQywxIdentifier();
         this.createBy = sysDepart.getCreateBy();
         this.createTime = sysDepart.getCreateTime();
         this.updateBy = sysDepart.getUpdateBy();
@@ -179,8 +185,16 @@ public class SysDepartTreeModel implements Serializable{
     public void setDepartName(String departName) {
         this.departName = departName;
     }
+    
+    public String getOrgCategory() {
+		return orgCategory;
+	}
 
-    public String getOrgType() {
+	public void setOrgCategory(String orgCategory) {
+		this.orgCategory = orgCategory;
+	}
+
+	public String getOrgType() {
         return orgType;
     }
 
@@ -252,11 +266,11 @@ public class SysDepartTreeModel implements Serializable{
         this.departOrder = departOrder;
     }
 
-    public Object getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(Object description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -274,6 +288,14 @@ public class SysDepartTreeModel implements Serializable{
 
     public void setDelFlag(String delFlag) {
         this.delFlag = delFlag;
+    }
+
+    public String getQywxIdentifier() {
+        return qywxIdentifier;
+    }
+
+    public void setQywxIdentifier(String qywxIdentifier) {
+        this.qywxIdentifier = qywxIdentifier;
     }
 
     public String getCreateBy() {
@@ -329,6 +351,7 @@ public class SysDepartTreeModel implements Serializable{
                 Objects.equals(departNameAbbr, model.departNameAbbr) &&
                 Objects.equals(departOrder, model.departOrder) &&
                 Objects.equals(description, model.description) &&
+                Objects.equals(orgCategory, model.orgCategory) &&
                 Objects.equals(orgType, model.orgType) &&
                 Objects.equals(orgCode, model.orgCode) &&
                 Objects.equals(mobile, model.mobile) &&
@@ -337,6 +360,7 @@ public class SysDepartTreeModel implements Serializable{
                 Objects.equals(memo, model.memo) &&
                 Objects.equals(status, model.status) &&
                 Objects.equals(delFlag, model.delFlag) &&
+                Objects.equals(qywxIdentifier, model.qywxIdentifier) &&
                 Objects.equals(createBy, model.createBy) &&
                 Objects.equals(createTime, model.createTime) &&
                 Objects.equals(updateBy, model.updateBy) &&
@@ -351,8 +375,8 @@ public class SysDepartTreeModel implements Serializable{
     public int hashCode() {
 
         return Objects.hash(id, parentId, departName, departNameEn, departNameAbbr,
-        		departOrder, description, orgType, orgCode, mobile, fax, address, 
-        		memo, status, delFlag, createBy, createTime, updateBy, updateTime, 
+        		departOrder, description, orgCategory, orgType, orgCode, mobile, fax, address, 
+        		memo, status, delFlag, qywxIdentifier, createBy, createTime, updateBy, updateTime,
         		children);
     }
 

@@ -6,13 +6,11 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.jeecg.common.aspect.annotation.Dict;
-import org.jeecg.modules.system.model.SysDepartTreeModel;
 import org.jeecgframework.poi.excel.annotation.Excel;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -29,7 +27,7 @@ public class SysDepart implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**ID*/
-	@TableId(type = IdType.UUID)
+	@TableId(type = IdType.ASSIGN_ID)
 	private String id;
 	/**父机构ID*/
 	private String parentId;
@@ -46,9 +44,11 @@ public class SysDepart implements Serializable {
 	private Integer departOrder;
 	/**描述*/
 	@Excel(name="描述",width=15)
-	private Object description;
+	private String description;
+	/**机构类别 1公司，2组织机构，2岗位*/
+	@Excel(name="机构类别",width=15,dicCode="org_category")
+	private String orgCategory;
 	/**机构类型*/
-	@Excel(name="机构类型",width=15)
 	private String orgType;
 	/**机构编码*/
 	@Excel(name="机构编码",width=15)
@@ -66,13 +66,13 @@ public class SysDepart implements Serializable {
 	@Excel(name="备注",width=15)
 	private String memo;
 	/**状态（1启用，0不启用）*/
-	@Excel(name="状态",width=15)
 	@Dict(dicCode = "depart_status")
 	private String status;
 	/**删除状态（0，正常，1已删除）*/
-	@Excel(name="删除状态",width=15)
 	@Dict(dicCode = "del_flag")
 	private String delFlag;
+	/**对接企业微信的ID*/
+	private String qywxIdentifier;
 	/**创建人*/
 	private String createBy;
 	/**创建日期*/
@@ -108,6 +108,7 @@ public class SysDepart implements Serializable {
                 Objects.equals(departNameAbbr, depart.departNameAbbr) &&
                 Objects.equals(departOrder, depart.departOrder) &&
                 Objects.equals(description, depart.description) &&
+                Objects.equals(orgCategory, depart.orgCategory) &&
                 Objects.equals(orgType, depart.orgType) &&
                 Objects.equals(orgCode, depart.orgCode) &&
                 Objects.equals(mobile, depart.mobile) &&
@@ -129,7 +130,7 @@ public class SysDepart implements Serializable {
     public int hashCode() {
 
         return Objects.hash(super.hashCode(), id, parentId, departName, 
-        		departNameEn, departNameAbbr, departOrder, description, 
+        		departNameEn, departNameAbbr, departOrder, description,orgCategory, 
         		orgType, orgCode, mobile, fax, address, memo, status, 
         		delFlag, createBy, createTime, updateBy, updateTime);
     }

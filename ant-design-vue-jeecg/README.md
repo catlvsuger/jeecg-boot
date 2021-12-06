@@ -1,13 +1,13 @@
 Ant Design Jeecg Vue
 ====
 
-当前最新版本： 2.0.2（发布日期：20190708）
+当前最新版本： 3.0.0（发布日期：2021-11-01）
 
 Overview
 ----
 
 基于 [Ant Design of Vue](https://vuecomponent.github.io/ant-design-vue/docs/vue/introduce-cn/) 实现的 Ant Design Pro  Vue 版
-Jeecg-boot 的前段UI框架，采用前后端分离方案，提供强大代码生成器的快速开发平台。
+Jeecg-boot 的前端UI框架，采用前后端分离方案，提供强大代码生成器的低代码平台。
 前端页面代码和后端功能代码一键生成，不需要写任何代码，保持jeecg一贯的强大！！
 
 
@@ -33,7 +33,7 @@ Jeecg-boot 的前段UI框架，采用前后端分离方案，提供强大代码�
 - 拉取项目代码
 ```bash
 git clone https://github.com/zhangdaiscott/jeecg-boot.git
-cd  jeecg-boot/ant-design-jeecg-vue
+cd  jeecg-boot/ant-design-vue-jeecg
 ```
 
 - 安装依赖
@@ -93,9 +93,9 @@ yarn run lint
 
 - [Vue](https://cn.vuejs.org/v2/guide)
 
-- [路由/菜单说明](https://github.com/zhangdaiscott/jeecg-boot/tree/master/ant-design-jeecg-vue/src/router/README.md)
+- [路由/菜单说明](https://github.com/zhangdaiscott/jeecg-boot/tree/master/ant-design-vue-jeecg/src/router/README.md)
 
-- [ANTD 默认配置项](https://github.com/zhangdaiscott/jeecg-boot/tree/master/ant-design-jeecg-vue/src/defaultSettings.js)
+- [ANTD 默认配置项](https://github.com/zhangdaiscott/jeecg-boot/tree/master/ant-design-vue-jeecg/src/defaultSettings.js)
 
 - 其他待补充...
 
@@ -104,3 +104,32 @@ yarn run lint
 ----
 
 > @vue/cli 升级后，eslint 规则更新了。由于影响到全部 .vue 文件，需要逐个验证。既暂时关闭部分原本不验证的规则，后期维护时，在逐步修正这些 rules
+
+
+Docker 镜像使用
+----
+
+ ``` 
+# 1.修改前端项目的后台域名
+    .env.development
+    域名改成： http://jeecg-boot-system:8080/jeecg-boot
+   
+# 2.先进入打包前端项目
+  yarn run build
+
+# 3.构建镜像
+  docker build -t nginx:jeecgboot .
+
+# 4.启动镜像
+  docker run --name jeecg-boot-nginx -p 80:80 -d nginx:jeecgboot
+
+# 5.配置host
+
+    # jeecgboot
+    127.0.0.1   jeecg-boot-redis
+    127.0.0.1   jeecg-boot-mysql
+    127.0.0.1   jeecg-boot-system
+  
+# 6.访问前台项目
+  http://localhost:80
+``` 

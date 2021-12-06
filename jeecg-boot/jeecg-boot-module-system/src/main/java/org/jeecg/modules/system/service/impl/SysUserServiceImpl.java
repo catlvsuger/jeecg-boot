@@ -1,32 +1,34 @@
 package org.jeecg.modules.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.constant.CacheConstant;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.api.ISysBaseAPI;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.system.vo.SysUserCacheInfo;
+import org.jeecg.common.util.PasswordUtil;
+import org.jeecg.common.util.UUIDGenerator;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.base.service.BaseCommonService;
 import org.jeecg.modules.system.entity.*;
 import org.jeecg.modules.system.mapper.*;
+import org.jeecg.modules.system.model.SysUserSysDepartModel;
 import org.jeecg.modules.system.service.ISysUserService;
+import org.jeecg.modules.system.vo.SysUserDepVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -52,7 +54,70 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	private ISysBaseAPI sysBaseAPI;
 	@Autowired
 	private SysDepartMapper sysDepartMapper;
-	
+	@Autowired
+	private SysRoleMapper sysRoleMapper;
+	@Autowired
+	private SysDepartRoleUserMapper departRoleUserMapper;
+	@Autowired
+	private SysDepartRoleMapper sysDepartRoleMapper;
+	@Resource
+	private BaseCommonService baseCommonService;
+	@Autowired
+	private SysThirdAccountMapper sysThirdAccountMapper;
+	@Autowired
+	ThirdAppWechatEnterpriseServiceImpl wechatEnterpriseService;
+	@Autowired
+	ThirdAppDingtalkServiceImpl dingtalkService;
+
+    @Override
+    @CacheEvict(value = {CacheConstant.SYS_USERS_CACHE}, allEntries = true)
+    public Result<?> resetPassword(String username, String oldpassword, String newpassword, String confirmpassword) {
+        SysUser user = userMapper.getUserByName(username);
+        String passwordEncode = PasswordUtil.encrypt(username, oldpassword, user.getSalt());
+        if (!user.getPassword().equals(passwordEncode)) {
+            return Result.error("旧密码输入错误!");
+        }
+        if (oConvertUtils.isEmpty(newpassword)) {
+            return Result.error("新密码不允许为空!");
+        }
+        if (!newpassword.equals(confirmpassword)) {
+            return Result.error("两次输入密码不一致!");
+        }
+        String password = PasswordUtil.encrypt(username, newpassword, user.getSalt());
+        this.userMapper.update(new SysUser().setPassword(password), new LambdaQueryWrapper<SysUser>().eq(SysUser::getId, user.getId()));
+        return Result.ok("密码重置成功!");
+    }
+
+    @Override
+    @CacheEvict(value = {CacheConstant.SYS_USERS_CACHE}, allEntries = true)
+    public Result<?> changePassword(SysUser sysUser) {
+        String salt = oConvertUtils.randomGen(8);
+        sysUser.setSalt(salt);
+        String password = sysUser.getPassword();
+        String passwordEncode = PasswordUtil.encrypt(sysUser.getUsername(), password, salt);
+        sysUser.setPassword(passwordEncode);
+        this.userMapper.updateById(sysUser);
+        return Result.ok("密码修改成功!");
+    }
+
+    @Override
+    @CacheEvict(value={CacheConstant.SYS_USERS_CACHE}, allEntries=true)
+	@Transactional(rollbackFor = Exception.class)
+	public boolean deleteUser(String userId) {
+		//1.删除用户
+		this.removeById(userId);
+		return false;
+	}
+
+	@Override
+    @CacheEvict(value={CacheConstant.SYS_USERS_CACHE}, allEntries=true)
+	@Transactional(rollbackFor = Exception.class)
+	public boolean deleteBatchUsers(String userIds) {
+		//1.删除用户
+		this.removeByIds(Arrays.asList(userIds.split(",")));
+		return false;
+	}
+
 	@Override
 	public SysUser getUserByName(String username) {
 		return userMapper.getUserByName(username);
@@ -73,7 +138,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	@Override
-	@CacheEvict(value= CacheConstant.LOGIN_USER_RULES_CACHE, allEntries=true)
+	@CacheEvict(value= {CacheConstant.SYS_USERS_CACHE}, allEntries=true)
 	@Transactional
 	public void editUserWithRole(SysUser user, String roles) {
 		this.updateById(user);
@@ -100,7 +165,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      * @return 角色集合
 	 */
 	@Override
-	@Cacheable(value = CacheConstant.LOGIN_USER_RULES_CACHE,key = "'Roles_'+#username")
 	public Set<String> getUserRolesSet(String username) {
 		// 查询用户拥有的角色集合
 		List<String> roles = sysUserRoleMapper.getRoleByUserName(username);
@@ -115,7 +179,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	 * @return 权限集合
 	 */
 	@Override
-	@Cacheable(value = CacheConstant.LOGIN_USER_RULES_CACHE,key = "'Permissions_'+#username")
 	public Set<String> getUserPermissionsSet(String username) {
 		Set<String> permissionSet = new HashSet<>();
 		List<SysPermission> permissionList = sysPermissionMapper.queryByUser(username);
@@ -173,6 +236,47 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		return userMapper.getUserByDepId(page, departId,username);
 	}
 
+	@Override
+	public IPage<SysUser> getUserByDepIds(Page<SysUser> page, List<String> departIds, String username) {
+		return userMapper.getUserByDepIds(page, departIds,username);
+	}
+
+	@Override
+	public Map<String, String> getDepNamesByUserIds(List<String> userIds) {
+		List<SysUserDepVo> list = this.baseMapper.getDepNamesByUserIds(userIds);
+
+		Map<String, String> res = new HashMap<String, String>();
+		list.forEach(item -> {
+					if (res.get(item.getUserId()) == null) {
+						res.put(item.getUserId(), item.getDepartName());
+					} else {
+						res.put(item.getUserId(), res.get(item.getUserId()) + "," + item.getDepartName());
+					}
+				}
+		);
+		return res;
+	}
+
+	@Override
+	public IPage<SysUser> getUserByDepartIdAndQueryWrapper(Page<SysUser> page, String departId, QueryWrapper<SysUser> queryWrapper) {
+		LambdaQueryWrapper<SysUser> lambdaQueryWrapper = queryWrapper.lambda();
+
+		lambdaQueryWrapper.eq(SysUser::getDelFlag, CommonConstant.DEL_FLAG_0);
+        lambdaQueryWrapper.inSql(SysUser::getId, "SELECT user_id FROM sys_user_depart WHERE dep_id = '" + departId + "'");
+
+        return userMapper.selectPage(page, lambdaQueryWrapper);
+	}
+
+	@Override
+	public IPage<SysUserSysDepartModel> queryUserByOrgCode(String orgCode, SysUser userParams, IPage page) {
+		List<SysUserSysDepartModel> list = baseMapper.getUserByOrgCode(page, orgCode, userParams);
+		Integer total = baseMapper.getUserByOrgCodeTotal(orgCode, userParams);
+
+		IPage<SysUserSysDepartModel> result = new Page<>(page.getCurrent(), page.getSize(), total);
+		result.setRecords(list);
+
+		return result;
+	}
 
 	// 根据角色Id查询
 	@Override
@@ -182,6 +286,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
 
 	@Override
+	@CacheEvict(value= {CacheConstant.SYS_USERS_CACHE}, key="#username")
 	public void updateUserDepart(String username,String orgCode) {
 		baseMapper.updateUserDepart(username, orgCode);
 	}
@@ -213,14 +318,33 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
 
 	@Override
-	@Transactional
-	@CacheEvict(value="loginUser_cacheRules", allEntries=true)
+	@Transactional(rollbackFor = Exception.class)
+	@CacheEvict(value={CacheConstant.SYS_USERS_CACHE}, allEntries=true)
 	public void editUserWithDepart(SysUser user, String departs) {
 		this.updateById(user);  //更新角色的时候已经更新了一次了，可以再跟新一次
+		String[] arr = {};
+		if(oConvertUtils.isNotEmpty(departs)){
+			arr = departs.split(",");
+		}
+		//查询已关联部门
+		List<SysUserDepart> userDepartList = sysUserDepartMapper.selectList(new QueryWrapper<SysUserDepart>().lambda().eq(SysUserDepart::getUserId, user.getId()));
+		if(userDepartList != null && userDepartList.size()>0){
+			for(SysUserDepart depart : userDepartList ){
+				//修改已关联部门删除部门用户角色关系
+				if(!Arrays.asList(arr).contains(depart.getDepId())){
+					List<SysDepartRole> sysDepartRoleList = sysDepartRoleMapper.selectList(
+							new QueryWrapper<SysDepartRole>().lambda().eq(SysDepartRole::getDepartId,depart.getDepId()));
+					List<String> roleIds = sysDepartRoleList.stream().map(SysDepartRole::getId).collect(Collectors.toList());
+					if(roleIds != null && roleIds.size()>0){
+						departRoleUserMapper.delete(new QueryWrapper<SysDepartRoleUser>().lambda().eq(SysDepartRoleUser::getUserId, user.getId())
+								.in(SysDepartRoleUser::getDroleId,roleIds));
+					}
+				}
+			}
+		}
 		//先删后加
 		sysUserDepartMapper.delete(new QueryWrapper<SysUserDepart>().lambda().eq(SysUserDepart::getUserId, user.getId()));
 		if(oConvertUtils.isNotEmpty(departs)) {
-			String[] arr = departs.split(",");
 			for (String departId : arr) {
 				SysUserDepart userDepart = new SysUserDepart(user.getId(), departId);
 				sysUserDepartMapper.insert(userDepart);
@@ -240,21 +364,179 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		//情况1：根据用户信息查询，该用户不存在
 		if (sysUser == null) {
 			result.error500("该用户不存在，请注册");
-			sysBaseAPI.addLog("用户登录失败，用户不存在！", CommonConstant.LOG_TYPE_1, null);
+			baseCommonService.addLog("用户登录失败，用户不存在！", CommonConstant.LOG_TYPE_1, null);
 			return result;
 		}
 		//情况2：根据用户信息查询，该用户已注销
-		if (CommonConstant.DEL_FLAG_1.toString().equals(sysUser.getDelFlag())) {
-			sysBaseAPI.addLog("用户登录失败，用户名:" + sysUser.getUsername() + "已注销！", CommonConstant.LOG_TYPE_1, null);
+		//update-begin---author:王帅   Date:20200601  for：if条件永远为falsebug------------
+		if (CommonConstant.DEL_FLAG_1.equals(sysUser.getDelFlag())) {
+		//update-end---author:王帅   Date:20200601  for：if条件永远为falsebug------------
+			baseCommonService.addLog("用户登录失败，用户名:" + sysUser.getUsername() + "已注销！", CommonConstant.LOG_TYPE_1, null);
 			result.error500("该用户已注销");
 			return result;
 		}
 		//情况3：根据用户信息查询，该用户已冻结
 		if (CommonConstant.USER_FREEZE.equals(sysUser.getStatus())) {
-			sysBaseAPI.addLog("用户登录失败，用户名:" + sysUser.getUsername() + "已冻结！", CommonConstant.LOG_TYPE_1, null);
+			baseCommonService.addLog("用户登录失败，用户名:" + sysUser.getUsername() + "已冻结！", CommonConstant.LOG_TYPE_1, null);
 			result.error500("该用户已冻结");
 			return result;
 		}
 		return result;
 	}
+
+	@Override
+	public List<SysUser> queryLogicDeleted() {
+		return this.queryLogicDeleted(null);
+	}
+
+	@Override
+	public List<SysUser> queryLogicDeleted(LambdaQueryWrapper<SysUser> wrapper) {
+		if (wrapper == null) {
+			wrapper = new LambdaQueryWrapper<>();
+		}
+		wrapper.eq(SysUser::getDelFlag, CommonConstant.DEL_FLAG_1);
+		return userMapper.selectLogicDeleted(wrapper);
+	}
+
+	@Override
+	public boolean revertLogicDeleted(List<String> userIds, SysUser updateEntity) {
+		String ids = String.format("'%s'", String.join("','", userIds));
+		return userMapper.revertLogicDeleted(ids, updateEntity) > 0;
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public boolean removeLogicDeleted(List<String> userIds) {
+		String ids = String.format("'%s'", String.join("','", userIds));
+		// 1. 删除用户
+		int line = userMapper.deleteLogicDeleted(ids);
+		// 2. 删除用户部门关系
+		line += sysUserDepartMapper.delete(new LambdaQueryWrapper<SysUserDepart>().in(SysUserDepart::getUserId, userIds));
+		//3. 删除用户角色关系
+		line += sysUserRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().in(SysUserRole::getUserId, userIds));
+		//4.同步删除第三方App的用户
+		try {
+			dingtalkService.removeThirdAppUser(userIds);
+			wechatEnterpriseService.removeThirdAppUser(userIds);
+		} catch (Exception e) {
+			log.error("同步删除第三方App的用户失败：", e);
+		}
+		//5. 删除第三方用户表（因为第4步需要用到第三方用户表，所以在他之后删）
+		line += sysThirdAccountMapper.delete(new LambdaQueryWrapper<SysThirdAccount>().in(SysThirdAccount::getSysUserId, userIds));
+
+		return line != 0;
+	}
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateNullPhoneEmail() {
+        userMapper.updateNullByEmptyString("email");
+        userMapper.updateNullByEmptyString("phone");
+        return true;
+    }
+
+	@Override
+	public void saveThirdUser(SysUser sysUser) {
+		//保存用户
+		String userid = UUIDGenerator.generate();
+		sysUser.setId(userid);
+		baseMapper.insert(sysUser);
+		//获取第三方角色
+		SysRole sysRole = sysRoleMapper.selectOne(new LambdaQueryWrapper<SysRole>().eq(SysRole::getRoleCode, "third_role"));
+		//保存用户角色
+		SysUserRole userRole = new SysUserRole();
+		userRole.setRoleId(sysRole.getId());
+		userRole.setUserId(userid);
+		sysUserRoleMapper.insert(userRole);
+	}
+
+	@Override
+	public List<SysUser> queryByDepIds(List<String> departIds, String username) {
+		return userMapper.queryByDepIds(departIds,username);
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void saveUser(SysUser user, String selectedRoles, String selectedDeparts) {
+		//step.1 保存用户
+		this.save(user);
+		//step.2 保存角色
+		if(oConvertUtils.isNotEmpty(selectedRoles)) {
+			String[] arr = selectedRoles.split(",");
+			for (String roleId : arr) {
+				SysUserRole userRole = new SysUserRole(user.getId(), roleId);
+				sysUserRoleMapper.insert(userRole);
+			}
+		}
+		//step.3 保存所属部门
+		if(oConvertUtils.isNotEmpty(selectedDeparts)) {
+			String[] arr = selectedDeparts.split(",");
+			for (String deaprtId : arr) {
+				SysUserDepart userDeaprt = new SysUserDepart(user.getId(), deaprtId);
+				sysUserDepartMapper.insert(userDeaprt);
+			}
+		}
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	@CacheEvict(value={CacheConstant.SYS_USERS_CACHE}, allEntries=true)
+	public void editUser(SysUser user, String roles, String departs) {
+		//step.1 修改用户基础信息
+		this.updateById(user);
+		//step.2 修改角色
+		//处理用户角色 先删后加
+		sysUserRoleMapper.delete(new QueryWrapper<SysUserRole>().lambda().eq(SysUserRole::getUserId, user.getId()));
+		if(oConvertUtils.isNotEmpty(roles)) {
+			String[] arr = roles.split(",");
+			for (String roleId : arr) {
+				SysUserRole userRole = new SysUserRole(user.getId(), roleId);
+				sysUserRoleMapper.insert(userRole);
+			}
+		}
+
+		//step.3 修改部门
+		String[] arr = {};
+		if(oConvertUtils.isNotEmpty(departs)){
+			arr = departs.split(",");
+		}
+		//查询已关联部门
+		List<SysUserDepart> userDepartList = sysUserDepartMapper.selectList(new QueryWrapper<SysUserDepart>().lambda().eq(SysUserDepart::getUserId, user.getId()));
+		if(userDepartList != null && userDepartList.size()>0){
+			for(SysUserDepart depart : userDepartList ){
+				//修改已关联部门删除部门用户角色关系
+				if(!Arrays.asList(arr).contains(depart.getDepId())){
+					List<SysDepartRole> sysDepartRoleList = sysDepartRoleMapper.selectList(
+							new QueryWrapper<SysDepartRole>().lambda().eq(SysDepartRole::getDepartId,depart.getDepId()));
+					List<String> roleIds = sysDepartRoleList.stream().map(SysDepartRole::getId).collect(Collectors.toList());
+					if(roleIds != null && roleIds.size()>0){
+						departRoleUserMapper.delete(new QueryWrapper<SysDepartRoleUser>().lambda().eq(SysDepartRoleUser::getUserId, user.getId())
+								.in(SysDepartRoleUser::getDroleId,roleIds));
+					}
+				}
+			}
+		}
+		//先删后加
+		sysUserDepartMapper.delete(new QueryWrapper<SysUserDepart>().lambda().eq(SysUserDepart::getUserId, user.getId()));
+		if(oConvertUtils.isNotEmpty(departs)) {
+			for (String departId : arr) {
+				SysUserDepart userDepart = new SysUserDepart(user.getId(), departId);
+				sysUserDepartMapper.insert(userDepart);
+			}
+		}
+		//step.4 修改手机号和邮箱
+		// 更新手机号、邮箱空字符串为 null
+		userMapper.updateNullByEmptyString("email");
+		userMapper.updateNullByEmptyString("phone");
+
+	}
+
+	@Override
+	public List<String> userIdToUsername(Collection<String> userIdList) {
+		LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.in(SysUser::getId, userIdList);
+		List<SysUser> userList = super.list(queryWrapper);
+		return userList.stream().map(SysUser::getUsername).collect(Collectors.toList());
+	}
+
 }

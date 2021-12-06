@@ -1,5 +1,6 @@
 <template>
   <a-date-picker
+    dropdownClassName="j-date-picker"
     :disabled="disabled || readOnly"
     :placeholder="placeholder"
     @change="handleDateChange"
@@ -7,7 +8,7 @@
     :showTime="showTime"
     :format="dateFormat"
     :getCalendarContainer="getCalendarContainer"
-  />
+    v-bind="$attrs"/>
 </template>
 <script>
   import moment from 'moment'
@@ -51,7 +52,7 @@
       },
       getCalendarContainer: {
         type: Function,
-        default: () => document.body
+        default: (node) => node.parentNode
       }
     },
     data () {

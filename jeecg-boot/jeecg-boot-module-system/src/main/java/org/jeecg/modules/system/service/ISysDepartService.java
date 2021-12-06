@@ -1,7 +1,9 @@
 package org.jeecg.modules.system.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.jeecg.modules.system.entity.SysDepart;
+import org.jeecg.modules.system.model.DepartIdModel;
 import org.jeecg.modules.system.model.SysDepartTreeModel;
 import java.util.List;
 
@@ -15,12 +17,30 @@ import java.util.List;
  */
 public interface ISysDepartService extends IService<SysDepart>{
 
+    /**
+     * 查询我的部门信息,并分节点进行显示
+     * @return
+     */
+    List<SysDepartTreeModel> queryMyDeptTreeList(String departIds);
 
     /**
      * 查询所有部门信息,并分节点进行显示
      * @return
      */
     List<SysDepartTreeModel> queryTreeList();
+
+
+    /**
+     * 查询所有部门信息,并分节点进行显示
+     * @return
+     */
+    List<SysDepartTreeModel> queryTreeList(String ids);
+
+    /**
+     * 查询所有部门DepartId信息,并分节点进行显示
+     * @return
+     */
+    public List<DepartIdModel> queryDepartIdTreeList();
 
     /**
      * 保存部门数据
@@ -47,7 +67,7 @@ public interface ISysDepartService extends IService<SysDepart>{
      * @param keyWord
      * @return
      */
-    List<SysDepartTreeModel> searhBy(String keyWord);
+    List<SysDepartTreeModel> searhBy(String keyWord,String myDeptSearch,String departIds);
     
     /**
      * 根据部门id删除并删除其可能存在的子级部门
@@ -62,5 +82,66 @@ public interface ISysDepartService extends IService<SysDepart>{
      * @return
      */
 	public List<SysDepart> queryUserDeparts(String userId);
-    
+
+    /**
+     * 根据用户名查询部门
+     *
+     * @param username
+     * @return
+     */
+    List<SysDepart> queryDepartsByUsername(String username);
+
+	 /**
+     * 根据部门id批量删除并删除其可能存在的子级部门
+     * @param id
+     * @return
+     */
+	void deleteBatchWithChildren(List<String> ids);
+
+    /**
+     *  根据部门Id查询,当前和下级所有部门IDS
+     * @param departId
+     * @return
+     */
+    List<String> getSubDepIdsByDepId(String departId);
+
+    /**
+     * 获取我的部门下级所有部门IDS
+     * @return
+     */
+    List<String> getMySubDepIdsByDepId(String departIds);
+    /**
+     * 根据关键字获取部门信息（通讯录）
+     * @return
+     */
+    List<SysDepartTreeModel> queryTreeByKeyWord(String keyWord);
+    /**
+     * 获取我的部门下级所有部门
+     * @return
+     */
+    List<SysDepartTreeModel> queryTreeListByPid(String parentId,String ids);
+
+    /**
+     * 获取某个部门的所有父级部门的ID
+     *
+     * @param departId 根据departId查
+     */
+    JSONObject queryAllParentIdByDepartId(String departId);
+
+    /**
+     * 获取某个部门的所有父级部门的ID
+     *
+     * @param orgCode 根据orgCode查
+     */
+    JSONObject queryAllParentIdByOrgCode(String orgCode);
+    /**
+     * 获取公司信息
+     * @return
+     */
+    SysDepart queryCompByOrgCode(String orgCode);
+    /**
+     * 获取下级部门
+     * @return
+     */
+    List<SysDepart> queryDeptByPid(String pid);
 }

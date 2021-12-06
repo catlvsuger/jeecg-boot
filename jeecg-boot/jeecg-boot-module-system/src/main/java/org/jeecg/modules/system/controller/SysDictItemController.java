@@ -6,6 +6,10 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.constant.CacheConstant;
 import org.jeecg.common.system.query.QueryGenerator;
@@ -65,11 +69,11 @@ public class SysDictItemController {
 	
 	/**
 	 * @功能：新增
-	 * @param sysDict
 	 * @return
 	 */
+	//@RequiresRoles({"admin"})
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	@CacheEvict(value= CacheConstant.DICT_CACHE, allEntries=true)
+	@CacheEvict(value= {CacheConstant.SYS_DICT_CACHE, CacheConstant.SYS_ENABLE_DICT_CACHE}, allEntries=true)
 	public Result<SysDictItem> add(@RequestBody SysDictItem sysDictItem) {
 		Result<SysDictItem> result = new Result<SysDictItem>();
 		try {
@@ -88,8 +92,9 @@ public class SysDictItemController {
 	 * @param sysDictItem
 	 * @return
 	 */
-	@RequestMapping(value = "/edit", method = RequestMethod.PUT)
-	@CacheEvict(value=CacheConstant.DICT_CACHE, allEntries=true)
+	//@RequiresRoles({"admin"})
+	@RequestMapping(value = "/edit",  method = { RequestMethod.PUT,RequestMethod.POST })
+	@CacheEvict(value={CacheConstant.SYS_DICT_CACHE, CacheConstant.SYS_ENABLE_DICT_CACHE}, allEntries=true)
 	public Result<SysDictItem> edit(@RequestBody SysDictItem sysDictItem) {
 		Result<SysDictItem> result = new Result<SysDictItem>();
 		SysDictItem sysdict = sysDictItemService.getById(sysDictItem.getId());
@@ -111,8 +116,9 @@ public class SysDictItemController {
 	 * @param id
 	 * @return
 	 */
+	//@RequiresRoles({"admin"})
 	@RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-	@CacheEvict(value=CacheConstant.DICT_CACHE, allEntries=true)
+	@CacheEvict(value={CacheConstant.SYS_DICT_CACHE, CacheConstant.SYS_ENABLE_DICT_CACHE}, allEntries=true)
 	public Result<SysDictItem> delete(@RequestParam(name="id",required=true) String id) {
 		Result<SysDictItem> result = new Result<SysDictItem>();
 		SysDictItem joinSystem = sysDictItemService.getById(id);
@@ -132,8 +138,9 @@ public class SysDictItemController {
 	 * @param ids
 	 * @return
 	 */
+	//@RequiresRoles({"admin"})
 	@RequestMapping(value = "/deleteBatch", method = RequestMethod.DELETE)
-	@CacheEvict(value=CacheConstant.DICT_CACHE, allEntries=true)
+	@CacheEvict(value={CacheConstant.SYS_DICT_CACHE, CacheConstant.SYS_ENABLE_DICT_CACHE}, allEntries=true)
 	public Result<SysDictItem> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		Result<SysDictItem> result = new Result<SysDictItem>();
 		if(ids==null || "".equals(ids.trim())) {
@@ -143,6 +150,34 @@ public class SysDictItemController {
 			result.success("删除成功!");
 		}
 		return result;
+	}
+
+	/**
+	 * 字典值重复校验
+	 * @param sysDictItem
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/dictItemCheck", method = RequestMethod.GET)
+	@ApiOperation("字典重复校验接口")
+	public Result<Object> doDictItemCheck(SysDictItem sysDictItem, HttpServletRequest request) {
+		int num = 0;
+		LambdaQueryWrapper<SysDictItem> queryWrapper = new LambdaQueryWrapper<SysDictItem>();
+		queryWrapper.eq(SysDictItem::getItemValue,sysDictItem.getItemValue());
+		queryWrapper.eq(SysDictItem::getDictId,sysDictItem.getDictId());
+		if (StringUtils.isNotBlank(sysDictItem.getId())) {
+			// 编辑页面校验
+			queryWrapper.ne(SysDictItem::getId,sysDictItem.getId());
+		}
+		num = sysDictItemService.count(queryWrapper);
+		if (num == 0) {
+			// 该值可用
+			return Result.ok("该值可用！");
+		} else {
+			// 该值不可用
+			log.info("该值不可用，系统中已存在！");
+			return Result.error("该值不可用，系统中已存在！");
+		}
 	}
 	
 }
