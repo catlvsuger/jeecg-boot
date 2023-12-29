@@ -1,6 +1,7 @@
 ## ide
 **/.idea
 *.iml
+rebel.xml
 
 ## backend
 **/target
@@ -8,3 +9,4 @@
 
 ## front
 **/*.lock
+os_del.cmd

@@ -1,30 +1,30 @@
 
 
-![JEECG](https://jeecgos.oss-cn-beijing.aliyuncs.com/files/site/jeecgfengm.png "JeecgBoot低代码开发平台")
+![JEECG](https://jeecgos.oss-cn-beijing.aliyuncs.com/files/logov3.png "JeecgBoot低代码开发平台")
 
 
 
-JEECG BOOT 低代码开发平台（前后端分离版本）
+JEECG BOOT 低代码开发平台
 ===============
 
-当前最新版本： 3.0（发布日期：2021-11-01）
+当前最新版本： 3.6.1（发布日期：2023-12-11） 
 
 
 [![AUR](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)](https://github.com/zhangdaiscott/jeecg-boot/blob/master/LICENSE)
-[![](https://img.shields.io/badge/Author-北京国炬软件-orange.svg)](http://www.jeecg.com)
+[![](https://img.shields.io/badge/Author-北京国炬软件-orange.svg)](http://jeecg.com/aboutusIndex)
 [![](https://img.shields.io/badge/Blog-官方博客-blue.svg)](https://jeecg.blog.csdn.net)
-[![](https://img.shields.io/badge/version-3.0-brightgreen.svg)](https://github.com/zhangdaiscott/jeecg-boot)
+[![](https://img.shields.io/badge/version-3.6.1-brightgreen.svg)](https://github.com/zhangdaiscott/jeecg-boot)
 [![GitHub stars](https://img.shields.io/github/stars/zhangdaiscott/jeecg-boot.svg?style=social&label=Stars)](https://github.com/zhangdaiscott/jeecg-boot)
 [![GitHub forks](https://img.shields.io/github/forks/zhangdaiscott/jeecg-boot.svg?style=social&label=Fork)](https://github.com/zhangdaiscott/jeecg-boot)
 
 
 
-项目介绍：
+项目介绍
 -----------------------------------
 
 <h3 align="center">Java Low Code Platform for Enterprise web applications</h3>
 
-JeecgBoot 是一款基于代码生成器的`低代码平台`！前后端分离架构 SpringBoot2.x，SpringCloud，Ant Design&Vue，Mybatis-plus，Shiro，JWT，支持微服务。强大的代码生成器让前后端代码一键生成，实现低代码开发!  JeecgBoot 引领新的低代码开发模式(OnlineCoding-> 代码生成器-> 手工MERGE)， 帮助解决Java项目70%的重复工作，让开发更多关注业务。既能快速提高效率，节省研发成本，同时又不失灵活性！
+JeecgBoot 是一款基于代码生成器的`低代码开发平台`！前后端分离架构 SpringBoot2.x，SpringCloud，Ant Design&Vue，Mybatis-plus，Shiro，JWT，支持微服务。强大的代码生成器让前后端代码一键生成，实现低代码开发!  JeecgBoot 引领新的低代码开发模式(OnlineCoding-> 代码生成器-> 手工MERGE)， 帮助解决Java项目70%的重复工作，让开发更多关注业务。既能快速提高效率，节省研发成本，同时又不失灵活性！
 
 JeecgBoot 提供了一系列`低代码模块`，实现在线开发`真正的零代码`：Online表单开发、Online报表、报表配置能力、在线图表设计、大屏设计、移动配置能力、表单设计器、在线设计流程、流程自动化配置、插件能力（可插拔）等等！
 
@@ -33,6 +33,7 @@ JeecgBoot 提供了一系列`低代码模块`，实现在线开发`真正的零�
 
 `JEECG业务流程:` 采用工作流来实现、扩展出任务接口，供开发编写业务逻辑，表单提供多种解决方案： 表单设计器、online配置表单、编码表单。同时实现了流程与表单的分离设计（松耦合）、并支持任务节点灵活配置，既保证了公司流程的保密性，又减少了开发人员的工作量。
 
+遇到技术问题，[请在这里反馈BUG](https://github.com/jeecgboot/jeecg-boot/issues/new)
 
 适用项目
 -----------------------------------
@@ -40,40 +41,141 @@ Jeecg-Boot低代码开发平台，可以应用在任何J2EE项目的开发中，
 
 
 
+
+项目源码
+-----------------------------------
+| 仓库 |前端源码 Vue3版 | 后端JAVA源码 |
+|-|-|-|
+| Github | [jeecgboot-vue3](https://github.com/jeecgboot/jeecgboot-vue3)   | [jeecg-boot](https://github.com/jeecgboot/jeecg-boot) |
+| 码云 | [jeecgboot-vue3](https://gitee.com/jeecg/jeecgboot-vue3)   | [jeecg-boot](https://gitee.com/jeecg/jeecg-boot) |
+
+> 官方已推出 `SpringBoot3+JDK17版本` [分支源码下载](https://github.com/jeecgboot/jeecg-boot/tree/springboot3)  |  [升级SpringBoot3博客](https://blog.csdn.net/zhangdaiscott/article/details/134805602)
+
+#### 项目说明
+
+| 项目名                | 说明                     | 
+|--------------------|------------------------|
+| `jeecgboot-vue3` | 前端源码 (Vue3版本) |
+| `jeecg-boot`    | 后端JAVA源码（支持微服务）        |
+| `jeecg-uniapp` | [APP开发框架，一份代码多终端适配，同时支持APP、小程序、H5](https://github.com/jeecgboot/jeecg-uniapp) |
+| `更多开源项目` | [更多底层源码下载](http://jeecg.com/download) |
+
+
+
+快速搭建开发环境
+-----------------------------------
+
+- [通过IDEA导入项目](https://help.jeecg.com/java/setup/idea.html)
+- [通过IDEA启动前后端项目](https://help.jeecg.com/java/setup/idea/startup.html)
+- [Vue3前端项目快速启动](http://help.jeecg.com/setup/startup.html)
+- [单体快速切换为微服务版](https://help.jeecg.com/java/springcloud/switchcloud/monomer.html)
+
+
+Docker快速启动项目
+-----------------------------------
+
+- [Docker启动单体后台](https://help.jeecg.com/java/setup/docker/up.html)
+- [Docker启动Vue3前端](http://help.jeecg.com/publish/docker.html)
+- [Docker启动微服务后台](https://help.jeecg.com/java/springcloud/docker.html)
+
+
 技术文档
 -----------------------------------
 
-- 技术官网：  [http://www.jeecg.com](http://www.jeecg.com)
+- 项目官网：  [http://www.jeecg.com](http://www.jeecg.com)
+- 开发文档：  [http://help.jeecg.com](http://help.jeecg.com)
+- 新手指南： [快速入门](http://www.jeecg.com/doc/quickstart)  |   [常见问题 ](http://www.jeecg.com/doc/qa) |  [视频教程](https://space.bilibili.com/454617261/channel/series)  |  [1分钟低代码体验](https://my.oschina.net/jeecg/blog/3083313) 
 
-- 在线演示 ： [http://boot.jeecg.com](http://boot.jeecg.com)
-
-- 在线演示(VUE3beta版)：[http://boot3.jeecg.com](http://boot3.jeecg.com)
-
-- 开发文档：  [http://doc.jeecg.com](http://doc.jeecg.com)
-
-- 视频教程  ：[JeecgBoot入门视频](http://www.jeecg.com/doc/video)
-
-- 微服务启动：  [单体升级为微服务启动文档2.4+](http://doc.jeecg.com/2043906)
-
-- 常见问题：  [入门常见问题Q&A](http://jeecg.com/doc/qa)
-
-- 更新日志：  [版本日志](http://www.jeecg.com/doc/log)
+- 在线演示 ：  [Vue3演示](http://boot3.jeecg.com)   | [APP演示](http://jeecg.com/appIndex) |  [敲敲云零代码](https://qiaoqiaoyun.com)
+> 演示系统的登录账号密码，请点击 [获取账号密码](http://jeecg.com/doc/demo) 获取 
+>
+- QQ交流群 ： ⑧825232878、⑦791696430(满)、⑥730954414(满)、683903138(满)、⑤860162132(满)、④774126647(满)、③816531124(满)、②769925425(满)、①284271917(满)
+> ` 提醒：【QQ群是自助服务群，建议给帮助您解决问题的同学发送指定红包，表示感谢！】 `
 
 
+大龄码农的思考
+-----------------------------------
+> 作为码农年纪大了写不动代码了怎么办？？哎！！
+所以我们团队在追求不写代码也可实现复杂业务系统！目前已经做到了，不信你到敲敲云零代码试试（通过流程串联修改业务数据）
 
-交流互动
+- https://www.qiaoqiaoyun.com
+
+
+技术支持
 -----------------------------------
 
-- QQ交流群 ： ⑤860162132、④774126647(满)、③816531124(满)、②769925425(满)、①284271917(满)
+关闭gitee的issue通道，使用中遇到问题或者BUG可以在 [Github上提Issues](https://github.com/jeecgboot/jeecg-boot/issues/new)
 
-- 反馈问题：  [反馈问题，请按格式发Issues](https://github.com/zhangdaiscott/jeecg-boot/issues/new)
-
-- 参与开源：  [欢迎加入JEECG开源团队，共同进步！！](http://www.jeecg.com/doc/join)
-
-- Online一分钟：  [1分钟快速学习](https://my.oschina.net/jeecg/blog/3083313)
+官方支持： [http://jeecg.com/doc/help](http://jeecg.com/doc/help)
 
 
-为什么选择JEECG-BOOT?
+
+
+VUE2版本专题介绍
+-----------------------------------
+#### 项目介绍 
+- 项目名称：ant-design-vue-jeecg
+- 说明：JeecgBoot前端提供两套解决方案，一套VUE2和一套VUE3版本，目前vue2版本最新代码只支持到jeecgboot 3.4.3版本，一定注意。
+
+#### 源码下载
+| 源码                | 源码地址                     | 
+|--------------------|------------------------|
+| 后端JAVA源码 `Vue2版`  |https://gitee.com/jeecg/jeecg-boot/tree/v3.4.3last    |
+| 前端vue2源码 `Vue2版`  |https://gitee.com/jeecg/ant-design-vue-jeecg    |
+
+#### Vue2与Vue3版本区别
+> - VUE3版本彻底抛弃IE兼容，不兼容IE和低版本浏览器，只适配高版本谷歌和Edge
+ （政府、事业类单位项目需要谨慎选择——国产化迁移是一个漫长的过程，万一过程中要求IE兼容，这个不可逆）
+> - 所以如果对浏览器有要求的项目，请选择VUE2版本。
+> - VUE3版是全新的技术栈，紧跟主流（前端重写），各个功能都做了优化，拥有更好的体验效果
+
+#### 技术文档
+- 在线演示：[Vue2版演示](http://boot.jeecg.com) 
+- 开发文档：| [开发文档](http://doc.jeecg.com)  | [Vue2前端快速启动](http://doc.jeecg.com/2678320) |  [Vue2前端采用Docker启动](http://doc.jeecg.com/3043612)
+
+
+
+Star走势图
+-----------------------------------
+
+[![Star History Chart](https://api.star-history.com/svg?repos=jeecgboot/jeecg-boot&type=Date)](https://star-history.com/#jeecgboot/jeecg-boot)
+
+
+
+
+后台目录结构
+-----------------------------------
+```
+项目结构
+├─jeecg-boot-parent（父POM： 项目依赖、modules组织）
+│  ├─jeecg-boot-base-core（共通模块： 工具类、config、权限、查询过滤器、注解等）
+│  ├─jeecg-module-demo    示例代码
+│  ├─jeecg-module-system  System系统管理目录
+│  │  ├─jeecg-system-biz    System系统管理权限等功能
+│  │  ├─jeecg-system-start  System单体启动项目(8080）
+│  │  ├─jeecg-system-api    System系统管理模块对外api
+│  │  │  ├─jeecg-system-cloud-api   System模块对外提供的微服务接口
+│  │  │  ├─jeecg-system-local-api   System模块对外提供的单体接口
+│  ├─jeecg-server-cloud           --微服务模块
+     ├─jeecg-cloud-gateway       --微服务网关模块(9999)
+     ├─jeecg-cloud-nacos       --Nacos服务模块(8848)
+     ├─jeecg-system-cloud-start  --System微服务启动项目(7001)
+     ├─jeecg-demo-cloud-start    --Demo微服务启动项目(7002)
+     ├─jeecg-visual
+        ├─jeecg-cloud-monitor       --微服务监控模块 (9111)
+        ├─jeecg-cloud-xxljob        --微服务xxljob定时任务服务端 (9080)
+        ├─jeecg-cloud-sentinel     --sentinel服务端 (9000)
+        ├─jeecg-cloud-test           -- 微服务测试示例（各种例子）
+           ├─jeecg-cloud-test-more         -- 微服务测试示例（feign、熔断降级、xxljob、分布式锁）
+           ├─jeecg-cloud-test-rabbitmq     -- 微服务测试示例（rabbitmq）
+           ├─jeecg-cloud-test-seata          -- 微服务测试示例（seata分布式事务）
+           ├─jeecg-cloud-test-shardingsphere    -- 微服务测试示例（分库分表）
+```
+
+
+
+
+为什么选择JeecgBoot?
 -----------------------------------
 * 1.采用最新主流前后分离框架（Springboot+Mybatis+antd），容易上手; 代码生成器依赖性低,灵活的扩展能力，可快速实现二次开发;
 * 2.支持微服务SpringCloud Alibaba(Nacos、Gateway、Sentinel、Skywalking)，提供切换机制支持单体和微服务自由切换
@@ -94,7 +196,7 @@ Jeecg-Boot低代码开发平台，可以应用在任何J2EE项目的开发中，
 * 17.支持SAAS服务模式，提供SaaS多租户架构方案。
 * 18.分布式文件服务，集成minio、阿里OSS等优秀的第三方，提供便捷的文件上传与管理，同时也支持本地存储。
 * 19.主流数据库兼容，一套代码完全兼容Mysql、Postgresql、Oracle、Sqlserver、MariaDB、达梦等主流数据库。
-* 20.集成工作流activiti，并实现了只需在页面配置流程转向，可极大的简化bpm工作流的开发；用bpm的流程设计器画出了流程走向，一个工作流基本就完成了，只需写很少量的java代码；
+* 20.集成工作流activiti、flowable，并实现了只需在页面配置流程转向，可极大的简化bpm工作流的开发；用bpm的流程设计器画出了流程走向，一个工作流基本就完成了，只需写很少量的java代码；
 * 21.低代码能力：在线流程设计，采用开源Activiti流程引擎，实现在线画流程,自定义表单,表单挂靠,业务流转
 * 22.多数据源：及其简易的使用方式，在线配置数据源配置，便捷的从其他数据抓取数据；
 * 23.提供单点登录CAS集成方案，项目中已经提供完善的对接代码
@@ -124,17 +226,46 @@ Jeecg-Boot低代码开发平台，可以应用在任何J2EE项目的开发中，
 -----------------------------------
 #### 开发环境
 
-- 语言：Java 8
+- 语言：Java 8+ (小于17)
 
-- IDE(JAVA)： IDEA / Eclipse安装lombok插件 
+- IDE(JAVA)： IDEA (必须安装lombok插件 )
 
-- IDE(前端)： WebStorm 或者 IDEA
+- IDE(前端)： Vscode、WebStorm、IDEA
 
 - 依赖管理：Maven
 
 - 缓存：Redis
 
-- 数据库脚本：MySQL5.7+  &  Oracle 11g & Sqlserver2017（默认只提供这三个库脚本，其他库需要自己转）
+- 数据库脚本：MySQL5.7+  &  Oracle 11g & Sqlserver2017（其他数据库，[需要自己转](https://my.oschina.net/jeecg/blog/4905722)）
+
+
+#### 后端
+
+- 基础框架：Spring Boot 2.6.14
+
+- 微服务框架： Spring Cloud Alibaba 2021.0.1.0
+
+- 持久层框架：MybatisPlus 3.5.1
+
+- 报表工具： JimuReport 1.5.8
+
+- 安全框架：Apache Shiro 1.10.0，Jwt 3.11.0
+
+- 微服务技术栈：Spring Cloud Alibaba、Nacos、Gateway、Sentinel、Skywalking
+
+- 数据库连接池：阿里巴巴Druid 1.1.22
+
+- 日志打印：logback
+
+- 其他：autopoi, fastjson，poi，Swagger-ui，quartz, lombok（简化代码）等。
+
+
+#### 前端
+
+- Vue2版本：`Vue2.6+@vue/cli+AntDesignVue+Viser-vue+Vuex等`  [详细查看](https://github.com/jeecgboot/ant-design-vue-jeecg)
+- Vue3版本：`Vue3.0+TypeScript+Vite+AntDesignVue+pinia+echarts等新方案` [详细查看](https://github.com/jeecgboot/jeecgboot-vue3)
+
+#### 支持库
 
 |  数据库   |  支持   |
 | --- | --- |
@@ -142,49 +273,52 @@ Jeecg-Boot低代码开发平台，可以应用在任何J2EE项目的开发中，
 |  Oracle11g   |  √   |
 |  Sqlserver2017   |  √   |
 |   PostgreSQL   |  √   |
-|   DB2、Informix   |  √   |
 |   MariaDB   |  √   |
-|  SQLite、Hsqldb、Derby、H2   |  √   |
-|   达梦、人大金仓、神通   |  √   |
-|   华为高斯、虚谷、瀚高数据库   |  √   |
-|   阿里云PolarDB、PPAS、HerdDB   |  √   |
-|  Hive、HBase、CouchBase   |  √   |
+|   达梦、人大金仓   |  √   |
 
 
-#### 后端
-- 基础框架：Spring Boot 2.3.5.RELEASE
 
-- 微服务框架： Spring Cloud Alibaba 2.2.3.RELEASE
-
-- 持久层框架：Mybatis-plus 3.4.3.1、Minidao 
-
-- 报表工具： jimureport 1.3.78
-
-- 安全框架：Apache Shiro 1.7.0，Jwt 3.11.0
-
-- 微服务技术栈：Spring Cloud Alibaba、Nacos、Gateway、Sentinel、Skywalking
-
-- 数据库连接池：阿里巴巴Druid 1.1.22
-
-- 缓存框架：redis
-
-- 日志打印：logback
-
-- 其他：fastjson，poi，Swagger-ui，quartz, lombok（简化代码）等。
+## 微服务解决方案
 
 
-#### 前端
- 
-- [Vue 2.6.10](https://cn.vuejs.org/),[Vuex](https://vuex.vuejs.org/zh/),[Vue Router](https://router.vuejs.org/zh/)
-- [Axios](https://github.com/axios/axios)
-- [ant-design-vue](https://vuecomponent.github.io/ant-design-vue/docs/vue/introduce-cn/)
-- [webpack](https://www.webpackjs.com/),[yarn](https://yarnpkg.com/zh-Hans/)
-- [vue-cropper](https://github.com/xyxiao001/vue-cropper) - 头像裁剪组件
-- [@antv/g2](https://antv.alipay.com/zh-cn/index.html) - Alipay AntV 数据可视化图表
-- [Viser-vue](https://viserjs.github.io/docs.html#/viser/guide/installation)  - antv/g2 封装实现
-- eslint，[@vue/cli 3.2.1](https://cli.vuejs.org/zh/guide)
-- vue-print-nb - 打印
+1、服务注册和发现 Nacos √
 
+2、统一配置中心 Nacos  √
+
+3、路由网关 gateway(三种加载方式) √
+
+4、分布式 http feign √
+
+5、熔断降级限流 Sentinel √
+
+6、分布式文件 Minio、阿里OSS √ 
+
+7、统一权限控制 JWT + Shiro √
+
+8、服务监控 SpringBootAdmin√
+
+9、链路跟踪 Skywalking   [参考文档](https://help.jeecg.com/java/springcloud/super/skywarking.html)
+
+10、消息中间件 RabbitMQ  √
+
+11、分布式任务 xxl-job  √ 
+
+12、分布式事务 Seata
+
+13、分布式日志 elk + kafka
+
+14、支持 docker-compose、k8s、jenkins
+
+15、CAS 单点登录   √
+
+16、路由限流   √
+
+   
+#### 微服务架构图
+![微服务架构图](https://jeecgos.oss-cn-beijing.aliyuncs.com/files/jeecgboot_springcloud2022.png "在这里输入图片标题")
+
+### Jeecg Boot 产品功能蓝图
+![功能蓝图](https://jeecgos.oss-cn-beijing.aliyuncs.com/upload/test/Jeecg-Boot-lantu202005_1590912449914.jpg "在这里输入图片标题")
 
 
 
@@ -301,18 +435,20 @@ Jeecg-Boot低代码开发平台，可以应用在任何J2EE项目的开发中，
 │  ├─Online在线表单 - 功能已开放
 │  ├─Online代码生成器 - 功能已开放
 │  ├─Online在线报表 - 功能已开放
-│  ├─Online在线图表(暂不开源)
-│  ├─Online图表模板配置(暂不开源)
-│  ├─Online布局设计(暂不开源)
+│  ├─Online在线图表(未开源)
+│  ├─Online图表模板配置(未开源)
+│  ├─Online布局设计(未开源)
 │  ├─多数据源管理 - 功能已开放
 ├─积木报表设计器(低代码)
 │  ├─打印设计器
 │  ├─数据报表设计
 │  ├─图形报表设计（支持echart）
-│  ├─大屏设计器(暂不开源)
-│─流程模块功能 (暂不开源)
+│  ├─大屏设计器(未开源)
+│─更多商业功能 (未开源)
 │  ├─流程设计器
-│  ├─在线表单设计
+│  ├─表单设计器
+   ├─大屏设计器
+   ├─门户设计/仪表盘设计器
 │  └─我的任务
 │  └─历史流程
 │  └─历史流程
@@ -323,142 +459,107 @@ Jeecg-Boot低代码开发平台，可以应用在任何J2EE项目的开发中，
 │  └─我的抄送
 │  └─流程委派、抄送、跳转
 │  └─。。。
+│─OA办公组件 (未开源)
+│  ├─更多功能
+│  └─。。。
 └─其他模块
    └─更多功能开发中。。
    
 ```
 
-## 微服务整体解决方案(2.4+版本)
+### 流程引擎推荐
+
+JeecgBoot企业版本默认集成了activiti和flowable两套方案，大家在使用本开源项目时，如果想进一步集成流程引擎，推荐结合贺波老师的书 [《深入Activiti流程引擎：核心原理与高阶实战》](https://item.m.jd.com/product/13928958.html?gx=RnAomTM2bmCImZxDqYAkVCoIHuIYVqc)
+
+<img src="https://jeecgos.oss-cn-beijing.aliyuncs.com/files/tuijian20231220161656.png" width="25%" height="auto">
 
 
-1、服务注册和发现 Nacos √
-
-2、统一配置中心 Nacos  √
-
-3、路由网关 gateway(三种加载方式) √
-
-4、分布式 http feign √
-
-5、熔断和降级 Sentinel √
-
-6、分布式文件 Minio、阿里OSS √ 
-
-7、统一权限控制 JWT + Shiro √
-
-8、服务监控 SpringBootAdmin√
-
-9、链路跟踪 Skywalking   [参考文档](https://www.kancloud.cn/zhangdaiscott/jeecgcloud/1771670)
-
-10、消息中间件 RabbitMQ  √
-
-11、分布式任务 xxl-job  √ 
-
-12、分布式事务 Seata
-
-13、分布式日志 elk + kafka
-
-14、支持 docker-compose、k8s、jenkins
-
-15、CAS 单点登录   √
-
-16、路由限流   √
-
-   
-#### 微服务架构图
-![微服务架构图](https://jeecgos.oss-cn-beijing.aliyuncs.com/files/jeecgboot-weifuwu-cloud.png "在这里输入图片标题")
-
-### Jeecg Boot 产品功能蓝图
-![功能蓝图](https://jeecgos.oss-cn-beijing.aliyuncs.com/upload/test/Jeecg-Boot-lantu202005_1590912449914.jpg "在这里输入图片标题")
+### 系统效果
 
 
-后台开发环境和依赖
-----
-- java
-- maven
-- jdk8
-- mysql
-- redis
-- 数据库脚本：jeecg-boot/db/jeecgboot-mysql-5.7.sql
-- 默认登录账号： admin/123456
-
-
-前端开发环境和依赖
-----
-- node
-- yarn
-- webpack
-- eslint
-- @vue/cli 3.2.1
-- [ant-design-vue](https://github.com/vueComponent/ant-design-vue) - Ant Design Of Vue 实现
-- [vue-cropper](https://github.com/xyxiao001/vue-cropper) - 头像裁剪组件
-- [@antv/g2](https://antv.alipay.com/zh-cn/index.html) - Alipay AntV 数据可视化图表
-- [Viser-vue](https://viserjs.github.io/docs.html#/viser/guide/installation)  - antv/g2 封装实现
-- [jeecg-boot-angular 版本](https://gitee.com/dangzhenghui/jeecg-boot)
-
-项目下载和运行
-----
-
-- 拉取项目代码
-```bash
-git clone https://github.com/zhangdaiscott/jeecg-boot.git
-cd  jeecg-boot/ant-design-vue-jeecg
-```
-
-1. 安装node.js
-2. 切换到ant-design-vue-jeecg文件夹下
-```
-# 安装yarn
-npm install -g yarn
-
-# 下载依赖
-yarn install
-
-# 启动
-yarn run serve
-
-# 编译项目
-yarn run build
-
-# Lints and fixes files
-yarn run lint
-```
-
-
-
-
-系统效果
-----
-##### 大屏模板
-![输入图片说明](https://static.oschina.net/uploads/img/201912/25133248_Ag1C.jpg "在这里输入图片标题")
-
-![输入图片说明](https://static.oschina.net/uploads/img/201912/25133301_k9Kc.jpg "在这里输入图片标题")
 
 ##### PC端
+![](https://oscimg.oschina.net/oscnet/up-000530d95df337b43089ac77e562494f454.png)
+
 ![输入图片说明](https://static.oschina.net/uploads/img/201904/14155402_AmlV.png "在这里输入图片标题")
-![输入图片说明](https://static.oschina.net/uploads/img/201904/14160657_cHwb.png "在这里输入图片标题")
+
+![](https://oscimg.oschina.net/oscnet/up-9d6f36f251e71a0b515a01323474b03004c.png)
+
 ![输入图片说明](https://static.oschina.net/uploads/img/201904/14160813_KmXS.png "在这里输入图片标题")
+
 ![输入图片说明](https://static.oschina.net/uploads/img/201904/14160935_Nibs.png "在这里输入图片标题")
+
 ![输入图片说明](https://static.oschina.net/uploads/img/201904/14161004_bxQ4.png "在这里输入图片标题")
 
+#####  系统交互
+![](https://oscimg.oschina.net/oscnet/up-78b151fc888d4319377bf1cc311fe826871.png)
 
-##### 在线接口文档
-![输入图片说明](https://static.oschina.net/uploads/img/201908/27095258_M2Xq.png "在这里输入图片标题")
-![输入图片说明](https://static.oschina.net/uploads/img/201904/14160957_hN3X.png "在这里输入图片标题")
+![](https://oscimg.oschina.net/oscnet/up-16c07e000278329b69b228ae3189814b8e9.png)
 
 
-##### 报表
-![输入图片说明](https://static.oschina.net/uploads/img/201904/14160828_pkFr.png "在这里输入图片标题")
-![输入图片说明](https://static.oschina.net/uploads/img/201904/14160834_Lo23.png "在这里输入图片标题")
-![输入图片说明](https://static.oschina.net/uploads/img/201904/14160842_QK7B.png "在这里输入图片标题")
-![输入图片说明](https://static.oschina.net/uploads/img/201904/14160849_GBm5.png "在这里输入图片标题")
-![输入图片说明](https://static.oschina.net/uploads/img/201904/14160858_6RAM.png "在这里输入图片标题")
+##### 流程设计
+![](https://oscimg.oschina.net/oscnet/up-981ce174e4fbb48c8a2ce4ccfd7372e2994.png)
 
-##### 流程
-![输入图片说明](https://static.oschina.net/uploads/img/201904/14160623_8fwk.png "在这里输入图片标题")
-![输入图片说明](https://static.oschina.net/uploads/img/201904/14160917_9Ftz.png "在这里输入图片标题")
-![输入图片说明](https://static.oschina.net/uploads/img/201904/14160633_u59G.png "在这里输入图片标题")
 ![输入图片说明](https://static.oschina.net/uploads/img/201907/05165142_yyQ7.png "在这里输入图片标题")
 
+![输入图片说明](https://static.oschina.net/uploads/img/201904/14160917_9Ftz.png "在这里输入图片标题")
+
+![输入图片说明](https://static.oschina.net/uploads/img/201904/14160633_u59G.png "在这里输入图片标题")
+
+##### 简版流程设计
+
+![](https://oscimg.oschina.net/oscnet/up-1dc0d052149ec675f3e4fad632b82b48add.png)
+
+![](https://oscimg.oschina.net/oscnet/up-de31bc2f9d9b8332c554b0954cc73d79593.png)
+
+![](https://oscimg.oschina.net/oscnet/up-7f83b25159663686d67ed080eb16068c3b4.png)
+
+#####  仪表盘设计器
+![](https://oscimg.oschina.net/oscnet/up-9c9d41288c31398d76b390bdd400f13a582.png)
+
+![](https://oscimg.oschina.net/oscnet/up-fad98d42b2cf92f92a903c9cff7579f18ec.png)
+
+##### 报表设计器
+![](https://oscimg.oschina.net/oscnet/up-64648de000851f15f6c7b9573d107ebb5f8.png)
+
+![](https://oscimg.oschina.net/oscnet/up-fa52b44445db281c51d3f267dce7450d21b.gif)
+
+![](https://oscimg.oschina.net/oscnet/up-68a19149d640f1646c8ed89ed4375e3326c.png)
+
+![](https://oscimg.oschina.net/oscnet/up-f7e9cb2e3740f2d19ff63b40ec2dd554f96.png)
+
+##### 表单设计器
+![](https://oscimg.oschina.net/oscnet/up-5f8cb657615714b02190b355e59f60c5937.png)
+
+![](https://oscimg.oschina.net/oscnet/up-d9659b2f324e33218476ec98c9b400e6508.png)
+
+![](https://oscimg.oschina.net/oscnet/up-4868615395272d3206dbb960ade02dbc291.png)
+
+##### 大屏设计器
+![](https://oscimg.oschina.net/oscnet/up-402a6034124474bfef8dfc5b4b2bac1ce5c.png)
+
+![](https://oscimg.oschina.net/oscnet/up-6f7ba2e2ebbeea0d203db8d69fd87644c9f.png)
+
+![](https://oscimg.oschina.net/oscnet/up-ee8d34f318da466b8a6070a6e3111d12ce7.png)
+
+![](https://oscimg.oschina.net/oscnet/up-6b81781b43086819049c4421206810667c5.png)
+
+##### UNIAPP效果
+
+![](https://oscimg.oschina.net/oscnet/up-aac943fbd26561879c57a41f7a406edf274.png)
+
+![](https://oscimg.oschina.net/oscnet/up-9a44ba2e82b09c750629d12fafd7f60f553.png)
+
+##### 零代码应用
+![](https://oscimg.oschina.net/oscnet/up-4be29ae761b2615c8c54b3f668cd8432d9b.png)
+
+![](https://oscimg.oschina.net/oscnet/up-787e76bc24b38ecc7ed19f338808d128255.png)
+
+![](https://oscimg.oschina.net/oscnet/up-99d24a236c483362868523ad0d90f611487.png)
+
+![](https://oscimg.oschina.net/oscnet/up-339a0f29d10449abc7724e3bcda802761c1.png)
+
+![](https://oscimg.oschina.net/oscnet/up-b356670cdc14c609958c7619a537397c4b9.png)
 
 ##### 手机端
 ![](https://oscimg.oschina.net/oscnet/da543c5d0d57baab0cecaa4670c8b68c521.jpg)
@@ -467,58 +568,20 @@ yarn run lint
 ##### PAD端
 ![](https://oscimg.oschina.net/oscnet/e90fef970a8c33790ab03ffd6c4c7cec225.jpg)
 ![](https://oscimg.oschina.net/oscnet/d78218803a9e856a0aa82b45efc49849a0c.jpg)
-![](https://oscimg.oschina.net/oscnet/0404054d9a12647ef6f82cf9cfb80a5ac02.jpg)
 ![](https://oscimg.oschina.net/oscnet/59c23b230f52384e588ee16309b44fa20de.jpg)
 
 
-其他说明
-----
+##### 图表示例
+![](https://oscimg.oschina.net/oscnet/up-218bc6a1669496b241ebb23506440c0083e.png)
 
-- 项目使用的 [vue-cli3](https://cli.vuejs.org/guide/), 请更新您的 cli
+![输入图片说明](https://static.oschina.net/uploads/img/201904/14160834_Lo23.png "在这里输入图片标题")
+![输入图片说明](https://static.oschina.net/uploads/img/201904/14160842_QK7B.png "在这里输入图片标题")
+![输入图片说明](https://static.oschina.net/uploads/img/201904/14160849_GBm5.png "在这里输入图片标题")
+![输入图片说明](https://static.oschina.net/uploads/img/201904/14160858_6RAM.png "在这里输入图片标题")
 
-- 关闭 Eslint (不推荐) 移除 `package.json` 中 `eslintConfig` 整个节点代码
-
-- 修改 Ant Design 配色，在文件 `vue.config.js` 中，其他 less 变量覆盖参考 [ant design](https://ant.design/docs/react/customize-theme-cn) 官方说明
-```ecmascript 6
-  css: {
-    loaderOptions: {
-      less: {
-        modifyVars: {
-          /* less 变量覆盖，用于自定义 ant design 主题 */
-
-          'primary-color': '#F5222D',
-          'link-color': '#F5222D',
-          'border-radius-base': '4px',
-        },
-        javascriptEnabled: true,
-      }
-    }
-  }
-```
-
-
-
-附属文档
-----
-- [Ant Design Vue](https://www.antdv.com/docs/vue/introduce-cn)
-
-- [报表 viser-vue](https://viserjs.github.io/demo.html#/viser/line/basic-line)
-
-- [Vue](https://cn.vuejs.org/v2/guide)
-
-- [路由/菜单说明](https://gitee.com/jeecg/jeecg-boot/tree/v1.1/ant-design-vue-jeecg/src/router/README.md)
-
-- [ANTD 默认配置项](https://gitee.com/jeecg/jeecg-boot/blob/v1.1/ant-design-vue-jeecg/src/defaultSettings.js)
-
-- 其他待补充...
-
-
-备注
-----
-
-> @vue/cli 升级后，eslint 规则更新了。由于影响到全部 .vue 文件，需要逐个验证。既暂时关闭部分原本不验证的规则，后期维护时，在逐步修正这些 rules
-
-
+##### 在线接口文档
+![输入图片说明](https://static.oschina.net/uploads/img/201908/27095258_M2Xq.png "在这里输入图片标题")
+![输入图片说明](https://static.oschina.net/uploads/img/201904/14160957_hN3X.png "在这里输入图片标题")
 ## 捐赠 
 
 如果觉得还不错，请作者喝杯咖啡吧 ☺
